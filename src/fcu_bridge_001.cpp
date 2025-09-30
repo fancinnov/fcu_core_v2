@@ -10,6 +10,7 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Int16.h>
+#include <std_msgs/Float32MultiArray.h>
 #include <cmath>
 #include <string>
 #include <iostream>
@@ -485,29 +486,30 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
   }
 }
 
-void missionHandler(const geometry_msgs::InertiaStamped::ConstPtr& mission){
+void missionHandler(const std_msgs::Float32MultiArray::ConstPtr& mission){
     float yaw=0.0f, yaw_rate=0.0f;
     float px=0.0f, py=0.0f, pz=0.0f;
     float vx=0.0f, vy=0.0f, vz=0.0f;
     float ax=0.0f, ay=0.0f, az=0.0f;
-    yaw=mission->inertia.m;
-    px=mission->inertia.com.x;
-    py=mission->inertia.com.y;
-    pz=mission->inertia.com.z;
-    vx=mission->inertia.ixx;
-    vy=mission->inertia.ixy;
-    vz=mission->inertia.ixz;
-    ax=mission->inertia.iyy;
-    ay=mission->inertia.iyz;
-    az=mission->inertia.izz;
-
-		mav_send_target(
-			px, py, pz,
-			vx, vy, vz,
-			ax, ay, az,
-			yaw, yaw_rate
-		);
-
+    if (mission->data.size() == 11){
+      yaw=mission->data[0];
+      yaw_rate=mission->data[1];
+      px=mission->data[2];
+      py=mission->data[3];
+      pz=mission->data[4];
+      vx=mission->data[5];
+      vy=mission->data[6];
+      vz=mission->data[7];
+      ax=mission->data[8];
+      ay=mission->data[9];
+      az=mission->data[10];
+      mav_send_target(
+        px, py, pz,
+        vx, vy, vz,
+        ax, ay, az,
+        yaw, yaw_rate
+      );
+    }
 }
 
 void gnssHandler(const sensor_msgs::NavSatFix::ConstPtr& gnss){
@@ -536,7 +538,7 @@ int main(int argc, char **argv) {
   gnss_001=nh.subscribe<sensor_msgs::NavSatFix>("gnss_global_001", 100, gnssHandler, ros::TransportHints().tcpNoDelay());
   odom=nh.subscribe<nav_msgs::Odometry>("/vins_estimator/odometry_001", 100, odomHandler, ros::TransportHints().tcpNoDelay());
   cmd=nh.subscribe<std_msgs::Int16>("/fcu_bridge/command", 100, cmdHandler, ros::TransportHints().tcpNoDelay());
-  mission=nh.subscribe<geometry_msgs::InertiaStamped>("/fcu_bridge/mission_001", 100, missionHandler, ros::TransportHints().tcpNoDelay());
+  mission=nh.subscribe<std_msgs::Float32MultiArray>("/fcu_bridge/mission_001", 100, missionHandler, ros::TransportHints().tcpNoDelay());
   path_global = nh.advertise<nav_msgs::Path>("/path_global_001", 100);
   goal=nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 100);
   motion=nh.subscribe<geometry_msgs::PoseStamped>("/motion_001", 100, motionHandler, ros::TransportHints().tcpNoDelay());

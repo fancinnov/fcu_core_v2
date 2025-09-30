@@ -28,6 +28,11 @@ int main(int argc, char **argv) {
       return 0;
     }
     switch(buf[0]){
+      case 'p':
+        printf("执行路径\n");
+        cmd.data=0;
+        command.publish(cmd);
+        break;
       case 'a':
         printf("解锁\n");
         cmd.data=1;
