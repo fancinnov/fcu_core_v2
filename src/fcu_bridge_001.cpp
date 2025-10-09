@@ -248,8 +248,6 @@ void parse_data(void){
 						case MAVLINK_MSG_ID_HEARTBEAT:
               mavlink_msg_heartbeat_decode(&msg_received, &heartbeat);
               if((heartbeat.base_mode&MAV_MODE_FLAG_SAFETY_ARMED)==0){
-                cmd_pub.data=1003;
-                command.publish(cmd_pub);
                 armed=false;
               }else{
                 if(!armed){
@@ -405,19 +403,19 @@ void odomHandler(const nav_msgs::Odometry::ConstPtr& odom)
   mavlink_quaternion_to_euler(quaternion_odom, &roll, &pitch, &yaw);
   printf("x:%f,y:%f,z:%f,yaw:%f\n",position_map.x(),position_map.y(),position_map.z(),yaw);
 
-  mavlink_message_t msg_local_position_ned_cov, msg_attitude;
+  mavlink_message_t msg_local_position_ned, msg_attitude;
   mavlink_attitude_t attitude;
-  mavlink_local_position_ned_cov_t local_position_ned_cov;
+  mavlink_local_position_ned_t local_position_ned;
 
   attitude.yaw = yaw;
   mavlink_msg_attitude_encode(mavlink_system.sysid, mavlink_system.compid, &msg_attitude, &attitude);
   mavlink_send_msg(mav_chan, &msg_attitude);
 
-  local_position_ned_cov.x=position_map.x();
-  local_position_ned_cov.y=position_map.y();
-  local_position_ned_cov.z=position_map.z();
-  mavlink_msg_local_position_ned_cov_encode(mavlink_system.sysid, mavlink_system.compid, &msg_local_position_ned_cov, &local_position_ned_cov);
-  mavlink_send_msg(mav_chan, &msg_local_position_ned_cov);
+  local_position_ned.x=position_map.x();
+  local_position_ned.y=position_map.y();
+  local_position_ned.z=position_map.z();
+  mavlink_msg_local_position_ned_encode(mavlink_system.sysid, mavlink_system.compid, &msg_local_position_ned, &local_position_ned);
+  mavlink_send_msg(mav_chan, &msg_local_position_ned);
 }
 
 void motionHandler(const geometry_msgs::PoseStamped::ConstPtr& odom)
@@ -441,19 +439,19 @@ void motionHandler(const geometry_msgs::PoseStamped::ConstPtr& odom)
   mavlink_quaternion_to_euler(quaternion_odom, &roll, &pitch, &yaw);
   printf("x:%f,y:%f,z:%f,yaw:%f\n",position_map.x(),position_map.y(),position_map.z(),yaw);
   //动捕一般为前左上坐标系，需要改为前右下坐标系发给飞控
-  mavlink_message_t msg_local_position_ned_cov, msg_attitude;
+  mavlink_message_t msg_local_position_ned, msg_attitude;
   mavlink_attitude_t attitude;
-  mavlink_local_position_ned_cov_t local_position_ned_cov;
+  mavlink_local_position_ned_t local_position_ned;
 
   attitude.yaw = -yaw;
   mavlink_msg_attitude_encode(mavlink_system.sysid, mavlink_system.compid, &msg_attitude, &attitude);
   mavlink_send_msg(mav_chan, &msg_attitude);
 
-  local_position_ned_cov.x=position_map.x();
-  local_position_ned_cov.y=-position_map.y();
-  local_position_ned_cov.z=-position_map.z();
-  mavlink_msg_local_position_ned_cov_encode(mavlink_system.sysid, mavlink_system.compid, &msg_local_position_ned_cov, &local_position_ned_cov);
-  mavlink_send_msg(mav_chan, &msg_local_position_ned_cov);
+  local_position_ned.x=position_map.x();
+  local_position_ned.y=-position_map.y();
+  local_position_ned.z=-position_map.z();
+  mavlink_msg_local_position_ned_encode(mavlink_system.sysid, mavlink_system.compid, &msg_local_position_ned, &local_position_ned);
+  mavlink_send_msg(mav_chan, &msg_local_position_ned);
 }
 
 void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){

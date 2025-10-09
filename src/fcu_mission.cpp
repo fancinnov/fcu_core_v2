@@ -549,18 +549,18 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
       printf("No tracking!\n");
       return;
     }
-    float global_dx = follow->data[2] * cosf(-pos_odom_001_yaw) - follow->data[3] * sinf(-pos_odom_001_yaw);
-    float global_dy = follow->data[2] * sinf(-pos_odom_001_yaw) + follow->data[3] * cosf(-pos_odom_001_yaw);
+    float global_dx = follow->data[2] * cosf(pos_odom_001_yaw) - follow->data[3] * sinf(pos_odom_001_yaw);
+    float global_dy = follow->data[2] * sinf(pos_odom_001_yaw) + follow->data[3] * cosf(pos_odom_001_yaw);
     mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
     mission_001.layout.dim[0].label = "mission_001";
     mission_001.layout.dim[0].size = 11;
     mission_001.layout.dim[0].stride = 1;
     mission_001.data.resize(11);
-    mission_001.data[0]=follow->data[0];//rad
+    mission_001.data[0]=pos_odom_001_yaw+follow->data[0];//rad
     mission_001.data[1]=0.0f;//rad/s
     mission_001.data[2]=pos_odom_001_x+global_dx;//x
-    mission_001.data[3]=-pos_odom_001_y+global_dy;//y
-    mission_001.data[4]=follow->data[4];//z
+    mission_001.data[3]=pos_odom_001_y+global_dy;//y
+    mission_001.data[4]=0.0f;//z
     mission_001.data[5]=0.0f;//vx
     mission_001.data[6]=0.0f;//vy
     mission_001.data[7]=0.0f;//vz
@@ -575,8 +575,8 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
       printf("No tracking!\n");
       return;
     }
-    float global_dx = follow->data[2] * cosf(-pos_odom_001_yaw) - follow->data[3] * sinf(-pos_odom_001_yaw);
-    float global_dy = follow->data[2] * sinf(-pos_odom_001_yaw) + follow->data[3] * cosf(-pos_odom_001_yaw);
+    float global_dx = follow->data[2] * cosf(pos_odom_001_yaw) - follow->data[3] * sinf(pos_odom_001_yaw);
+    float global_dy = follow->data[2] * sinf(pos_odom_001_yaw) + follow->data[3] * cosf(pos_odom_001_yaw);
     mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
     mission_001.layout.dim[0].label = "mission_001";
     mission_001.layout.dim[0].size = 11;
@@ -585,7 +585,7 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
     mission_001.data[0]=0.0f;//rad
     mission_001.data[1]=0.0f;//rad/s
     mission_001.data[2]=pos_odom_001_x+global_dx;//x
-    mission_001.data[3]=-pos_odom_001_y+global_dy;//y
+    mission_001.data[3]=pos_odom_001_y+global_dy;//y
     mission_001.data[4]=0.0f;//z
     mission_001.data[5]=0.0f;//vx
     mission_001.data[6]=0.0f;//vy
