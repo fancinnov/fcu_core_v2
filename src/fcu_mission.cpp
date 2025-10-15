@@ -13,7 +13,9 @@
 #include <tf/transform_broadcaster.h>
 #include "quadrotor_msgs/PositionCommand.h"
 #include "../mavlink/common/mavlink.h"
-
+/**
+ * 注意：工程中mission_xxx话题为发给飞控的目标值，目标位移应为FRU坐标系，目标姿态应为FRD坐标系
+ */
 static bool enable_path=false;
 static bool enable_track=false;
 static bool get_pos_cmd=false;
@@ -310,9 +312,9 @@ void execute_mission_002(const ros::TimerEvent &event){
   mission_002.data.resize(11);
   mission_002.data[0]=0.0f;//rad
   mission_002.data[1]=0.0f;//rad/s
-  mission_002.data[2]=px1;//x
-  mission_002.data[3]=py1;//y
-  mission_002.data[4]=pz1;//z
+  mission_002.data[2]=px2;//x
+  mission_002.data[3]=py2;//y
+  mission_002.data[4]=pz2;//z
   mission_002.data[5]=0.0f;//vx
   mission_002.data[6]=0.0f;//vy
   mission_002.data[7]=0.0f;//vz
@@ -340,9 +342,9 @@ void execute_mission_003(const ros::TimerEvent &event){
   mission_003.data.resize(11);
   mission_003.data[0]=0.0f;//rad
   mission_003.data[1]=0.0f;//rad/s
-  mission_003.data[2]=px1;//x
-  mission_003.data[3]=py1;//y
-  mission_003.data[4]=pz1;//z
+  mission_003.data[2]=px3;//x
+  mission_003.data[3]=py3;//y
+  mission_003.data[4]=pz3;//z
   mission_003.data[5]=0.0f;//vx
   mission_003.data[6]=0.0f;//vy
   mission_003.data[7]=0.0f;//vz
@@ -370,9 +372,9 @@ void execute_mission_004(const ros::TimerEvent &event){
   mission_004.data.resize(11);
   mission_004.data[0]=0.0f;//rad
   mission_004.data[1]=0.0f;//rad/s
-  mission_004.data[2]=px1;//x
-  mission_004.data[3]=py1;//y
-  mission_004.data[4]=pz1;//z
+  mission_004.data[2]=px4;//x
+  mission_004.data[3]=py4;//y
+  mission_004.data[4]=pz4;//z
   mission_004.data[5]=0.0f;//vx
   mission_004.data[6]=0.0f;//vy
   mission_004.data[7]=0.0f;//vz
@@ -400,9 +402,9 @@ void execute_mission_005(const ros::TimerEvent &event){
   mission_005.data.resize(11);
   mission_005.data[0]=0.0f;//rad
   mission_005.data[1]=0.0f;//rad/s
-  mission_005.data[2]=px1;//x
-  mission_005.data[3]=py1;//y
-  mission_005.data[4]=pz1;//z
+  mission_005.data[2]=px5;//x
+  mission_005.data[3]=py5;//y
+  mission_005.data[4]=pz5;//z
   mission_005.data[5]=0.0f;//vx
   mission_005.data[6]=0.0f;//vy
   mission_005.data[7]=0.0f;//vz
@@ -430,9 +432,9 @@ void execute_mission_006(const ros::TimerEvent &event){
   mission_006.data.resize(11);
   mission_006.data[0]=0.0f;//rad
   mission_006.data[1]=0.0f;//rad/s
-  mission_006.data[2]=px1;//x
-  mission_006.data[3]=py1;//y
-  mission_006.data[4]=pz1;//z
+  mission_006.data[2]=px6;//x
+  mission_006.data[3]=py6;//y
+  mission_006.data[4]=pz6;//z
   mission_006.data[5]=0.0f;//vx
   mission_006.data[6]=0.0f;//vy
   mission_006.data[7]=0.0f;//vz
@@ -445,9 +447,9 @@ void execute_mission_006(const ros::TimerEvent &event){
 
 void odom_global001_handler(const nav_msgs::Odometry::ConstPtr& odom)
 {
-  pos_odom_001_x=(float)odom->pose.pose.position.x;
-  pos_odom_001_y=(float)odom->pose.pose.position.y;
-  pos_odom_001_z=-(float)odom->pose.pose.position.z;
+  pos_odom_001_x=(float)odom->pose.pose.position.x;//位置点改为FRU坐标
+  pos_odom_001_y=-(float)odom->pose.pose.position.y;
+  pos_odom_001_z=(float)odom->pose.pose.position.z;
   float quaternion_odom[4]={(float)odom->pose.pose.orientation.w,
                             (float)odom->pose.pose.orientation.x,
                             (float)odom->pose.pose.orientation.y,
@@ -457,9 +459,9 @@ void odom_global001_handler(const nav_msgs::Odometry::ConstPtr& odom)
 
 void odom_global002_handler(const nav_msgs::Odometry::ConstPtr& odom)
 {
-  pos_odom_002_x=(float)odom->pose.pose.position.x;
-  pos_odom_002_y=(float)odom->pose.pose.position.y;
-  pos_odom_002_z=-(float)odom->pose.pose.position.z;
+  pos_odom_002_x=(float)odom->pose.pose.position.x;//位置点改为FRU坐标
+  pos_odom_002_y=-(float)odom->pose.pose.position.y;
+  pos_odom_002_z=(float)odom->pose.pose.position.z;
   float quaternion_odom[4]={(float)odom->pose.pose.orientation.w,
                             (float)odom->pose.pose.orientation.x,
                             (float)odom->pose.pose.orientation.y,
@@ -469,9 +471,9 @@ void odom_global002_handler(const nav_msgs::Odometry::ConstPtr& odom)
 
 void odom_global003_handler(const nav_msgs::Odometry::ConstPtr& odom)
 {
-  pos_odom_003_x=(float)odom->pose.pose.position.x;
-  pos_odom_003_y=(float)odom->pose.pose.position.y;
-  pos_odom_003_z=-(float)odom->pose.pose.position.z;
+  pos_odom_003_x=(float)odom->pose.pose.position.x;//位置点改为FRU坐标
+  pos_odom_003_y=-(float)odom->pose.pose.position.y;
+  pos_odom_003_z=(float)odom->pose.pose.position.z;
   float quaternion_odom[4]={(float)odom->pose.pose.orientation.w,
                             (float)odom->pose.pose.orientation.x,
                             (float)odom->pose.pose.orientation.y,
@@ -481,9 +483,9 @@ void odom_global003_handler(const nav_msgs::Odometry::ConstPtr& odom)
 
 void odom_global004_handler(const nav_msgs::Odometry::ConstPtr& odom)
 {
-  pos_odom_004_x=(float)odom->pose.pose.position.x;
-  pos_odom_004_y=(float)odom->pose.pose.position.y;
-  pos_odom_004_z=-(float)odom->pose.pose.position.z;
+  pos_odom_004_x=(float)odom->pose.pose.position.x;//位置点改为FRU坐标
+  pos_odom_004_y=-(float)odom->pose.pose.position.y;
+  pos_odom_004_z=(float)odom->pose.pose.position.z;
   float quaternion_odom[4]={(float)odom->pose.pose.orientation.w,
                             (float)odom->pose.pose.orientation.x,
                             (float)odom->pose.pose.orientation.y,
@@ -493,9 +495,9 @@ void odom_global004_handler(const nav_msgs::Odometry::ConstPtr& odom)
 
 void odom_global005_handler(const nav_msgs::Odometry::ConstPtr& odom)
 {
-  pos_odom_005_x=(float)odom->pose.pose.position.x;
-  pos_odom_005_y=(float)odom->pose.pose.position.y;
-  pos_odom_005_z=-(float)odom->pose.pose.position.z;
+  pos_odom_005_x=(float)odom->pose.pose.position.x;//位置点改为FRU坐标
+  pos_odom_005_y=-(float)odom->pose.pose.position.y;
+  pos_odom_005_z=(float)odom->pose.pose.position.z;
   float quaternion_odom[4]={(float)odom->pose.pose.orientation.w,
                             (float)odom->pose.pose.orientation.x,
                             (float)odom->pose.pose.orientation.y,
@@ -505,9 +507,9 @@ void odom_global005_handler(const nav_msgs::Odometry::ConstPtr& odom)
 
 void odom_global006_handler(const nav_msgs::Odometry::ConstPtr& odom)
 {
-  pos_odom_006_x=(float)odom->pose.pose.position.x;
-  pos_odom_006_y=(float)odom->pose.pose.position.y;
-  pos_odom_006_z=-(float)odom->pose.pose.position.z;
+  pos_odom_006_x=(float)odom->pose.pose.position.x;//位置点改为FRU坐标
+  pos_odom_006_y=-(float)odom->pose.pose.position.y;
+  pos_odom_006_z=(float)odom->pose.pose.position.z;
   float quaternion_odom[4]={(float)odom->pose.pose.orientation.w,
                             (float)odom->pose.pose.orientation.x,
                             (float)odom->pose.pose.orientation.y,
@@ -521,6 +523,9 @@ void pos_cmd_handler(const quadrotor_msgs::PositionCommand::ConstPtr& pose_plan)
     return;
   }
   //发布mission
+  /**
+ * 注意：工程中/fcu_bridge/mission_xxx话题为发给飞控的目标值，目标位移应为FRU坐标系，目标姿态应为FRD坐标系
+ */
   get_pos_cmd=true;
   mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
   mission_001.layout.dim[0].label = "mission_001";
@@ -549,14 +554,14 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
       printf("No tracking!\n");
       return;
     }
-    float global_dx = follow->data[2] * cosf(pos_odom_001_yaw) - follow->data[3] * sinf(pos_odom_001_yaw);
-    float global_dy = follow->data[2] * sinf(pos_odom_001_yaw) + follow->data[3] * cosf(pos_odom_001_yaw);
+    float global_dx = follow->data[2] * cosf(-pos_odom_001_yaw) - follow->data[3] * sinf(-pos_odom_001_yaw);
+    float global_dy = follow->data[2] * sinf(-pos_odom_001_yaw) + follow->data[3] * cosf(-pos_odom_001_yaw);
     mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
     mission_001.layout.dim[0].label = "mission_001";
     mission_001.layout.dim[0].size = 11;
     mission_001.layout.dim[0].stride = 1;
     mission_001.data.resize(11);
-    mission_001.data[0]=pos_odom_001_yaw+follow->data[0];//rad
+    mission_001.data[0]=-pos_odom_001_yaw+follow->data[0];//rad
     mission_001.data[1]=0.0f;//rad/s
     mission_001.data[2]=pos_odom_001_x+global_dx;//x
     mission_001.data[3]=pos_odom_001_y+global_dy;//y
@@ -575,8 +580,8 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
       printf("No tracking!\n");
       return;
     }
-    float global_dx = follow->data[2] * cosf(pos_odom_001_yaw) - follow->data[3] * sinf(pos_odom_001_yaw);
-    float global_dy = follow->data[2] * sinf(pos_odom_001_yaw) + follow->data[3] * cosf(pos_odom_001_yaw);
+    float global_dx = follow->data[2] * cosf(-pos_odom_001_yaw) - follow->data[3] * sinf(-pos_odom_001_yaw);
+    float global_dy = follow->data[2] * sinf(-pos_odom_001_yaw) + follow->data[3] * cosf(-pos_odom_001_yaw);
     mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
     mission_001.layout.dim[0].label = "mission_001";
     mission_001.layout.dim[0].size = 11;
@@ -600,23 +605,23 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
 int main(int argc, char **argv) {
 
   ros::init(argc, argv, "fcu_mission");
-  ros::NodeHandle nh;
-  ros::Subscriber comm=nh.subscribe<std_msgs::Int16>("/fcu_bridge/command", 100, cmdHandler);
+  ros::NodeHandle nh("~");
+  ros::Subscriber comm=nh.subscribe<std_msgs::Int16>("/fcu_command/command", 100, cmdHandler);
   ros::Subscriber odom001=nh.subscribe<nav_msgs::Odometry>("odom_global_001", 100, odom_global001_handler);
   ros::Subscriber odom002=nh.subscribe<nav_msgs::Odometry>("odom_global_002", 100, odom_global002_handler);
   ros::Subscriber odom003=nh.subscribe<nav_msgs::Odometry>("odom_global_003", 100, odom_global003_handler);
   ros::Subscriber odom004=nh.subscribe<nav_msgs::Odometry>("odom_global_004", 100, odom_global004_handler);
   ros::Subscriber odom005=nh.subscribe<nav_msgs::Odometry>("odom_global_005", 100, odom_global005_handler);
   ros::Subscriber odom006=nh.subscribe<nav_msgs::Odometry>("odom_global_006", 100, odom_global006_handler);
-  ros::Subscriber pos_cmd=nh.subscribe<quadrotor_msgs::PositionCommand>("planning/pos_cmd", 100, pos_cmd_handler);
+  ros::Subscriber pos_cmd=nh.subscribe<quadrotor_msgs::PositionCommand>("pos_cmd", 100, pos_cmd_handler);
   ros::Subscriber mission_follow=nh.subscribe<std_msgs::Float32MultiArray>("mission_follow", 100, follow_handler);
 
-  mission_pub_001 = nh.advertise<std_msgs::Float32MultiArray>("/fcu_bridge/mission_001",100);
-  mission_pub_002 = nh.advertise<std_msgs::Float32MultiArray>("/fcu_bridge/mission_002",100);
-  mission_pub_003 = nh.advertise<std_msgs::Float32MultiArray>("/fcu_bridge/mission_003",100);
-  mission_pub_004 = nh.advertise<std_msgs::Float32MultiArray>("/fcu_bridge/mission_004",100);
-  mission_pub_005 = nh.advertise<std_msgs::Float32MultiArray>("/fcu_bridge/mission_005",100);
-  mission_pub_006 = nh.advertise<std_msgs::Float32MultiArray>("/fcu_bridge/mission_006",100);
+  mission_pub_001 = nh.advertise<std_msgs::Float32MultiArray>("mission_001",100);
+  mission_pub_002 = nh.advertise<std_msgs::Float32MultiArray>("mission_002",100);
+  mission_pub_003 = nh.advertise<std_msgs::Float32MultiArray>("mission_003",100);
+  mission_pub_004 = nh.advertise<std_msgs::Float32MultiArray>("mission_004",100);
+  mission_pub_005 = nh.advertise<std_msgs::Float32MultiArray>("mission_005",100);
+  mission_pub_006 = nh.advertise<std_msgs::Float32MultiArray>("mission_006",100);
   ros::Timer timer_mission_001 = nh.createTimer(ros::Duration(0.1),execute_mission_001,false);
   ros::Timer timer_mission_002 = nh.createTimer(ros::Duration(0.1),execute_mission_002,false);
   ros::Timer timer_mission_003 = nh.createTimer(ros::Duration(0.1),execute_mission_003,false);
@@ -631,7 +636,7 @@ int main(int argc, char **argv) {
     tf::Transform transform;
     tf::Quaternion q;
     transform.setOrigin(tf::Vector3(0, 0,0));
-    q.setRPY(M_PI, 0, 0);
+    q.setRPY(0, 0, 0);
     transform.setRotation(q);
     br.sendTransform(tf::StampedTransform(transform,  ros::Time::now(), "map", "uwb"));
     q.setRPY(0, 0, 0);

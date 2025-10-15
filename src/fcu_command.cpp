@@ -10,8 +10,8 @@ static std_msgs::Int16 cmd;
 int main(int argc, char **argv) {
 
   ros::init(argc, argv, "fcu_command");
-  ros::NodeHandle nh;
-  ros::Publisher command = nh.advertise<std_msgs::Int16>("/fcu_bridge/command",100);
+  ros::NodeHandle nh("~");
+  ros::Publisher command = nh.advertise<std_msgs::Int16>("command",100);
 
   while (ros::ok()) {
     // 获取从键盘输入的数据

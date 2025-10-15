@@ -9,25 +9,6 @@ typedef struct {
 	uint8_t  flagOverflow; // set when buffer overflowed
 } RingBuffer;
 
-static bool send_lock=false;
-static bool receive_lock=false;
-
-bool get_send_lock(void){
-    return send_lock;
-}
-
-bool get_receive_lock(void){
-    return receive_lock;
-}
-
-void set_send_lock(bool lock){
-    send_lock=lock;
-}
-
-void set_receive_lock(bool lock){
-    receive_lock=lock;
-}
-
 //初始化RingBuffer
 void rbInit(RingBuffer* pRingBuff, uint8_t* buff, uint16_t length)
 {

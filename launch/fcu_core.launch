@@ -1,15 +1,118 @@
 <launch>
 
-    <node pkg="fcu_core" type="fcu_bridge_001" name="fcu_bridge_001" output="screen" />
-    <node pkg="fcu_core" type="fcu_bridge_002" name="fcu_bridge_002" output="screen" />
-    <node pkg="fcu_core" type="fcu_bridge_003" name="fcu_bridge_003" output="screen" />
-    <node pkg="fcu_core" type="fcu_bridge_004" name="fcu_bridge_004" output="screen" />
-    <node pkg="fcu_core" type="fcu_bridge_005" name="fcu_bridge_005" output="screen" />
-    <node pkg="fcu_core" type="fcu_bridge_006" name="fcu_bridge_006" output="screen" />
+    <node pkg="fcu_core" type="fcu_bridge_001" name="fcu_bridge_001" output="screen" >
+        <remap from="~odometry_001" to="/vins_estimator/odometry"/>
+        <remap from="~imu_global_001" to="imu_global_001"/>
+        <remap from="~odom_global_001" to="odom_global_001"/>
+        <remap from="~path_global_001" to="path_global_001"/>
+        <remap from="~path_target_001" to="path_target_001"/>
+        <remap from="~goal_001" to="/move_base_simple/goal"/>
+        <remap from="~motion_001" to="motion_001"/>
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~mission_001" to="/fcu_mission/mission_001"/>
+        <param name="DRONE_IP" value="192.168.4.1" type="string"/>
+        <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
+        <param name="channel" value="1"/>
+        <param name="offboard" value="false" type="bool"/>
+        <param name="use_uwb" value="true" type="bool"/>
+        <param name="set_goal" value="false" type="bool"/>
+        <param name="simple_target" value="true" type="bool"/>
+        <param name="odom_init_x" value="0.0"/> <!-- FLU坐标系 -->
+        <param name="odom_init_y" value="0.0"/>
+        <param name="odom_init_z" value="0.0"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_bridge_002" name="fcu_bridge_002" output="screen" >
+        <remap from="~odometry_002" to="odometry_002"/>
+        <remap from="~imu_global_002" to="imu_global_002"/>
+        <remap from="~odom_global_002" to="odom_global_002"/>
+        <remap from="~path_global_002" to="path_global_002"/>
+        <remap from="~path_target_002" to="path_target_002"/>
+        <remap from="~motion_002" to="motion_002"/>
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~mission_002" to="/fcu_mission/mission_002"/>
+        <param name="DRONE_IP" value="192.168.0.202" type="string"/>
+        <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
+        <param name="channel" value="1"/>
+        <param name="offboard" value="false" type="bool"/>
+        <param name="use_uwb" value="true" type="bool"/>
+        <param name="set_goal" value="false" type="bool"/>
+        <param name="simple_target" value="true" type="bool"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_bridge_003" name="fcu_bridge_003" output="screen" >
+        <remap from="~odometry_003" to="odometry_003"/>
+        <remap from="~imu_global_003" to="imu_global_003"/>
+        <remap from="~odom_global_003" to="odom_global_003"/>
+        <remap from="~path_global_003" to="path_global_003"/>
+        <remap from="~path_target_003" to="path_target_003"/>
+        <remap from="~motion_003" to="motion_003"/>
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~mission_003" to="/fcu_mission/mission_003"/>
+        <param name="DRONE_IP" value="192.168.0.203" type="string"/>
+        <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
+        <param name="channel" value="1"/>
+        <param name="offboard" value="false" type="bool"/>
+        <param name="use_uwb" value="true" type="bool"/>
+        <param name="set_goal" value="false" type="bool"/>
+        <param name="simple_target" value="true" type="bool"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_bridge_004" name="fcu_bridge_004" output="screen" >
+        <remap from="~odometry_004" to="odometry_004"/>
+        <remap from="~imu_global_004" to="imu_global_004"/>
+        <remap from="~odom_global_004" to="odom_global_004"/>
+        <remap from="~path_global_004" to="path_global_004"/>
+        <remap from="~path_target_004" to="path_target_004"/>
+        <remap from="~motion_004" to="motion_004"/>
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~mission_004" to="/fcu_mission/mission_004"/>
+        <param name="DRONE_IP" value="192.168.0.204" type="string"/>
+        <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
+        <param name="channel" value="1"/>
+        <param name="offboard" value="false" type="bool"/>
+        <param name="use_uwb" value="true" type="bool"/>
+        <param name="set_goal" value="false" type="bool"/>
+        <param name="simple_target" value="true" type="bool"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_bridge_005" name="fcu_bridge_005" output="screen" >
+        <remap from="~odometry_005" to="odometry_005"/>
+        <remap from="~imu_global_005" to="imu_global_005"/>
+        <remap from="~odom_global_005" to="odom_global_005"/>
+        <remap from="~path_global_005" to="path_global_005"/>
+        <remap from="~path_target_005" to="path_target_005"/>
+        <remap from="~motion_005" to="motion_005"/>
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~mission_005" to="/fcu_mission/mission_005"/>
+        <param name="DRONE_IP" value="192.168.0.205" type="string"/>
+        <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
+        <param name="channel" value="1"/>
+        <param name="offboard" value="false" type="bool"/>
+        <param name="use_uwb" value="true" type="bool"/>
+        <param name="set_goal" value="false" type="bool"/>
+        <param name="simple_target" value="true" type="bool"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_bridge_006" name="fcu_bridge_006" output="screen" >
+        <remap from="~odometry_006" to="odometry_006"/>
+        <remap from="~imu_global_006" to="imu_global_006"/>
+        <remap from="~odom_global_006" to="odom_global_006"/>
+        <remap from="~path_global_006" to="path_global_006"/>
+        <remap from="~path_target_006" to="path_target_006"/>
+        <remap from="~motion_006" to="motion_006"/>
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~mission_006" to="/fcu_mission/mission_006"/>
+        <param name="DRONE_IP" value="192.168.0.206" type="string"/>
+        <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
+        <param name="channel" value="1"/>
+        <param name="offboard" value="false" type="bool"/>
+        <param name="use_uwb" value="true" type="bool"/>
+        <param name="set_goal" value="false" type="bool"/>
+        <param name="simple_target" value="true" type="bool"/>
+    </node>
 
     <node pkg="fcu_core" type="fcu_command" name="fcu_command" output="screen" />
 
-    <node pkg="fcu_core" type="fcu_mission" name="fcu_mission" output="screen" />
+    <node pkg="fcu_core" type="fcu_mission" name="fcu_mission" output="screen" >
+        <remap from="~pos_cmd" to="planning/pos_cmd"/>
+        <remap from="~mission_follow" to="mission_follow"/>
+    </node>
 
     <arg name="rviz" default="true" />
     <group if="$(arg rviz)">
