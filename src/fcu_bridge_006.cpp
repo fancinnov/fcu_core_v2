@@ -23,8 +23,8 @@
 #include "../mavlink/common/mavlink.h"
 using namespace std;
 #define BUF_SIZE 32768//数据缓存区大小
-#define BAUDRATE 460800 //虚拟串口波特率
 #define DRONE_PORT 333 //port
+static int bandrate=460800;//虚拟串口波特率
 static string drone_ip = "192.168.0.206"; //ip
 static string usb_port = "/dev/ttyACM0"; //usb虚拟串口文件描述符
 static mavlink_channel_t mav_chan=MAVLINK_COMM_1;//MAVLINK_COMM_0虚拟串口发送，MAVLINK_COMM_1网口发送
@@ -468,6 +468,7 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh("~");
   nh.param("DRONE_IP", drone_ip, string("192.168.0.206"));
   nh.param("USB_PORT", usb_port, string("/dev/ttyACM0"));
+  nh.param("BANDRATE", bandrate, 460800);
   nh.param("channel", channel, 1);
   nh.param("offboard", offboard, false);
   nh.param("use_uwb", use_uwb, true);
@@ -496,7 +497,7 @@ int main(int argc, char **argv) {
     try{
     //设置串口属性，并打开串口
 				ser.setPort(usb_port.c_str());
-				ser.setBaudrate(BAUDRATE);
+				ser.setBaudrate(bandrate);
         serial::Timeout to = serial::Timeout::simpleTimeout(5000);
         ser.setTimeout(to);
         ser.open();
