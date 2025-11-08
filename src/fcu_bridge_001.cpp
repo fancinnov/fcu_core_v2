@@ -463,9 +463,7 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
         mav_send_disarm();
         break;
     case 3:
-        if(!armed){
-          mav_send_takeoff();
-        }
+        mav_send_takeoff();
         break;
     case 4:
         mav_send_land();

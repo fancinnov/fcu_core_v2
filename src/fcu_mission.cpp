@@ -151,6 +151,15 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
         follow_forward=false;
         follow_down=false;
         break;
+    case 1011:
+        get_pos_cmd=true;
+        break;
+    case 1012:
+        get_pos_cmd=true;
+        break;
+    case 1013:
+        get_pos_cmd=false;
+        break;
     case 1101:
         pos_takeoff_001_x=pos_odom_001_x; pos_takeoff_001_y=pos_odom_001_y; pos_takeoff_001_z=pos_odom_001_z;
         break;

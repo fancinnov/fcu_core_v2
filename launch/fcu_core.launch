@@ -1,7 +1,7 @@
 <launch>
 
     <node pkg="fcu_core" type="fcu_bridge_001" name="fcu_bridge_001" output="screen" >
-        <remap from="~odometry_001" to="/vins_estimator/odometry"/>
+        <remap from="~odometry_001" to="/vins_estimator/odometry"/> <!--"/vins_estimator/odometry" for vins; "/Odometry" for faster-lio -->
         <remap from="~imu_global_001" to="imu_global_001"/>
         <remap from="~odom_global_001" to="odom_global_001"/>
         <remap from="~path_global_001" to="path_global_001"/>
