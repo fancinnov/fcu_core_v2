@@ -462,7 +462,7 @@ void gnssHandler(const sensor_msgs::NavSatFix::ConstPtr& gnss){
 
 int main(int argc, char **argv) {
 
-  ros::init(argc, argv, "fcu_bridge_001");
+  ros::init(argc, argv, "fcu_bridge_004");
   ros::NodeHandle nh("~");
   nh.param("DRONE_IP", drone_ip, string("192.168.0.204"));
   nh.param("USB_PORT", usb_port, string("/dev/ttyACM0"));
