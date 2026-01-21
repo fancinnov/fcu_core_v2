@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <geometry_msgs/InertiaStamped.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Odometry.h>
 #include <nav_msgs/Path.h>
 #include <std_msgs/Int16.h>
@@ -629,6 +630,144 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
   }
 }
 
+void goal_001_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
+{
+  float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
+  float quaternion_odom[4]={(float)goal->pose.orientation.w,
+                            (float)goal->pose.orientation.x,
+                            (float)goal->pose.orientation.y,
+                            (float)goal->pose.orientation.z};
+  mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
+  //发布mission
+  mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_001.layout.dim[0].label = "mission_001";
+  mission_001.layout.dim[0].size = 11;
+  mission_001.layout.dim[0].stride = 1;
+  mission_001.data.resize(11);
+  mission_001.data[0]=-goal_yaw;//rad
+  mission_001.data[1]=0.0;//rad/s
+  mission_001.data[2]=goal->pose.position.x;//x
+  mission_001.data[3]=-goal->pose.position.y;//y
+  mission_001.data[4]=goal->pose.position.z;//z
+  mission_pub_001.publish(mission_001);
+  set_goal=true;
+}
+
+void goal_002_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
+{
+  float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
+  float quaternion_odom[4]={(float)goal->pose.orientation.w,
+                            (float)goal->pose.orientation.x,
+                            (float)goal->pose.orientation.y,
+                            (float)goal->pose.orientation.z};
+  mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
+  //发布mission
+  mission_002.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_002.layout.dim[0].label = "mission_001";
+  mission_002.layout.dim[0].size = 11;
+  mission_002.layout.dim[0].stride = 1;
+  mission_002.data.resize(11);
+  mission_002.data[0]=-goal_yaw;//rad
+  mission_002.data[1]=0.0;//rad/s
+  mission_002.data[2]=goal->pose.position.x;//x
+  mission_002.data[3]=-goal->pose.position.y;//y
+  mission_002.data[4]=goal->pose.position.z;//z
+  mission_pub_002.publish(mission_002);
+  set_goal=true;
+}
+
+void goal_003_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
+{
+  float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
+  float quaternion_odom[4]={(float)goal->pose.orientation.w,
+                            (float)goal->pose.orientation.x,
+                            (float)goal->pose.orientation.y,
+                            (float)goal->pose.orientation.z};
+  mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
+  //发布mission
+  mission_003.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_003.layout.dim[0].label = "mission_001";
+  mission_003.layout.dim[0].size = 11;
+  mission_003.layout.dim[0].stride = 1;
+  mission_003.data.resize(11);
+  mission_003.data[0]=-goal_yaw;//rad
+  mission_003.data[1]=0.0;//rad/s
+  mission_003.data[2]=goal->pose.position.x;//x
+  mission_003.data[3]=-goal->pose.position.y;//y
+  mission_003.data[4]=goal->pose.position.z;//z
+  mission_pub_003.publish(mission_003);
+  set_goal=true;
+}
+
+void goal_004_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
+{
+  float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
+  float quaternion_odom[4]={(float)goal->pose.orientation.w,
+                            (float)goal->pose.orientation.x,
+                            (float)goal->pose.orientation.y,
+                            (float)goal->pose.orientation.z};
+  mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
+  //发布mission
+  mission_004.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_004.layout.dim[0].label = "mission_001";
+  mission_004.layout.dim[0].size = 11;
+  mission_004.layout.dim[0].stride = 1;
+  mission_004.data.resize(11);
+  mission_004.data[0]=-goal_yaw;//rad
+  mission_004.data[1]=0.0;//rad/s
+  mission_004.data[2]=goal->pose.position.x;//x
+  mission_004.data[3]=-goal->pose.position.y;//y
+  mission_004.data[4]=goal->pose.position.z;//z
+  mission_pub_004.publish(mission_004);
+  set_goal=true;
+}
+
+void goal_005_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
+{
+  float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
+  float quaternion_odom[4]={(float)goal->pose.orientation.w,
+                            (float)goal->pose.orientation.x,
+                            (float)goal->pose.orientation.y,
+                            (float)goal->pose.orientation.z};
+  mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
+  //发布mission
+  mission_005.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_005.layout.dim[0].label = "mission_001";
+  mission_005.layout.dim[0].size = 11;
+  mission_005.layout.dim[0].stride = 1;
+  mission_005.data.resize(11);
+  mission_005.data[0]=-goal_yaw;//rad
+  mission_005.data[1]=0.0;//rad/s
+  mission_005.data[2]=goal->pose.position.x;//x
+  mission_005.data[3]=-goal->pose.position.y;//y
+  mission_005.data[4]=goal->pose.position.z;//z
+  mission_pub_005.publish(mission_005);
+  set_goal=true;
+}
+
+void goal_006_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
+{
+  float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
+  float quaternion_odom[4]={(float)goal->pose.orientation.w,
+                            (float)goal->pose.orientation.x,
+                            (float)goal->pose.orientation.y,
+                            (float)goal->pose.orientation.z};
+  mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
+  //发布mission
+  mission_006.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_006.layout.dim[0].label = "mission_001";
+  mission_006.layout.dim[0].size = 11;
+  mission_006.layout.dim[0].stride = 1;
+  mission_006.data.resize(11);
+  mission_006.data[0]=-goal_yaw;//rad
+  mission_006.data[1]=0.0;//rad/s
+  mission_006.data[2]=goal->pose.position.x;//x
+  mission_006.data[3]=-goal->pose.position.y;//y
+  mission_006.data[4]=goal->pose.position.z;//z
+  mission_pub_006.publish(mission_006);
+  set_goal=true;
+}
+
 int main(int argc, char **argv) {
 
   ros::init(argc, argv, "fcu_mission");
@@ -642,7 +781,12 @@ int main(int argc, char **argv) {
   ros::Subscriber odom006=nh.subscribe<nav_msgs::Odometry>("odom_global_006", 100, odom_global006_handler);
   ros::Subscriber pos_cmd=nh.subscribe<quadrotor_msgs::PositionCommand>("pos_cmd", 100, pos_cmd_handler);
   ros::Subscriber mission_follow=nh.subscribe<std_msgs::Float32MultiArray>("mission_follow", 100, follow_handler);
-
+  ros::Subscriber goal001 = nh.subscribe<geometry_msgs::PoseStamped>("goal_001", 100, goal_001_handler);
+  ros::Subscriber goal002 = nh.subscribe<geometry_msgs::PoseStamped>("goal_002", 100, goal_002_handler);
+  ros::Subscriber goal003 = nh.subscribe<geometry_msgs::PoseStamped>("goal_003", 100, goal_003_handler);
+  ros::Subscriber goal004 = nh.subscribe<geometry_msgs::PoseStamped>("goal_004", 100, goal_004_handler);
+  ros::Subscriber goal005 = nh.subscribe<geometry_msgs::PoseStamped>("goal_005", 100, goal_005_handler);
+  ros::Subscriber goal006 = nh.subscribe<geometry_msgs::PoseStamped>("goal_006", 100, goal_006_handler);
   mission_pub_001 = nh.advertise<std_msgs::Float32MultiArray>("mission_001",100);
   mission_pub_002 = nh.advertise<std_msgs::Float32MultiArray>("mission_002",100);
   mission_pub_003 = nh.advertise<std_msgs::Float32MultiArray>("mission_003",100);

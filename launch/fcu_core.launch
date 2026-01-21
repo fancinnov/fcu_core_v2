@@ -131,4 +131,15 @@
         <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz" args="-d $(find fcu_core)/rviz_cfg/fcu_core.rviz" />
     </group>
 
+    <param name="robot_description"
+         command="$(find xacro)/xacro $(find FanciSwarm_urdf)/urdf/multi_fanciswarm.xacro" />
+
+    <node name="robot_state_publisher"
+        pkg="robot_state_publisher"
+        type="robot_state_publisher"
+        respawn="false"
+        output="screen">
+        <param name="publish_frequency" value="50.0"/>
+    </node>
+
 </launch>

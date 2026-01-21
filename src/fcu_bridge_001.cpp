@@ -11,6 +11,7 @@
 #include <std_msgs/Empty.h>
 #include <std_msgs/Int16.h>
 #include <std_msgs/Float32MultiArray.h>
+#include <tf/transform_broadcaster.h>
 #include <cmath>
 #include <string>
 #include <iostream>
@@ -81,7 +82,7 @@ geometry_msgs::PoseStamped goal_pub;
 geometry_msgs::PoseStamped odom_target;
 nav_msgs::Path path_target;
 ros::Publisher path_target_pub;
-
+tf::TransformBroadcaster *br = nullptr;
 RingBuffer mav_buf_send;
 RingBuffer mav_buf_receive;
 
@@ -343,6 +344,22 @@ void parse_data(void){
 							if(use_uwb&&(position.lat==0||position.lon==0)){
 								break;
 							}
+              if(br != nullptr) {
+                  tf::Transform transform;
+                  transform.setOrigin(tf::Vector3(odom_pub.pose.pose.position.x, 
+                                                odom_pub.pose.pose.position.y, 
+                                                odom_pub.pose.pose.position.z));
+                  tf::Quaternion q(odom_pub.pose.pose.orientation.x,
+                                  odom_pub.pose.pose.orientation.y,
+                                  odom_pub.pose.pose.orientation.z,
+                                  odom_pub.pose.pose.orientation.w);
+                  transform.setRotation(q);
+                  
+                  br->sendTransform(tf::StampedTransform(transform, 
+                                                        odom_pub.header.stamp, 
+                                                        "world", 
+                                                        "drone1_base_link"));
+              }
 							odomPose.header = odom_pub.header;
 							odomPose.pose = odom_pub.pose.pose;
 							path_pub.header.stamp = odom_pub.header.stamp;
@@ -401,7 +418,7 @@ void odomHandler(const nav_msgs::Odometry::ConstPtr& odom)
 
   float roll, pitch, yaw;
   mavlink_quaternion_to_euler(quaternion_odom, &roll, &pitch, &yaw);
-  printf("x:%f,y:%f,z:%f,yaw:%f\n",position_map.x(),position_map.y(),position_map.z(),yaw);
+  printf("x:%f,y:%f,z:%f,yaw:%f\n",position_map.x(),position_map.y(),position_map.z(),-yaw);
 
   mavlink_message_t msg_local_position_ned, msg_attitude;
   mavlink_attitude_t attitude;
@@ -437,7 +454,7 @@ void motionHandler(const geometry_msgs::PoseStamped::ConstPtr& odom)
 
   float roll, pitch, yaw;
   mavlink_quaternion_to_euler(quaternion_odom, &roll, &pitch, &yaw);
-  printf("x:%f,y:%f,z:%f,yaw:%f\n",position_map.x(),position_map.y(),position_map.z(),yaw);
+  printf("x:%f,y:%f,z:%f,yaw:%f\n",position_map.x(),position_map.y(),position_map.z(),-yaw);
   //动捕一般为前左上坐标系，需要改为前右下坐标系发给飞控
   mavlink_message_t msg_local_position_ned, msg_attitude;
   mavlink_attitude_t attitude;
@@ -564,7 +581,7 @@ int main(int argc, char **argv) {
 
   rbInit(&mav_buf_send, TxBuffer, BUF_SIZE);
 	rbInit(&mav_buf_receive, RxBuffer, BUF_SIZE);
-
+  br = new tf::TransformBroadcaster;
   if(mav_chan==MAVLINK_COMM_0){
     try{
     //设置串口属性，并打开串口

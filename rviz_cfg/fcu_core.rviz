@@ -1,34 +1,32 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
-        - /Status1
-        - /odometry1/odomPath1
-        - /odometry1/PointCloud21
+        - /path1
+        - /RobotModel1/Links1
       Splitter Ratio: 0.5
-    Tree Height: 567
+    Tree Height: 406
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
-    Expanded:
-      - /2D Pose Estimate1
-      - /2D Nav Goal1
-      - /Publish Point1
+    Expanded: ~
     Name: Tool Properties
-    Splitter Ratio: 0.588679016
+    Splitter Ratio: 0.41626793146133423
   - Class: rviz/Views
     Expanded:
       - /Current View1
     Name: Views
     Splitter Ratio: 0.5
   - Class: rviz/Time
-    Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: currPoints
+    SyncSource: ""
+  - Class: navi_multi_goals_pub_rviz_plugin/MultiNaviGoalsPanel
+    Name: MultiNaviGoalsPanel
+Preferences:
+  PromptSaveOnExit: true
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
@@ -40,7 +38,7 @@ Visualization Manager:
       Color: 160; 160; 164
       Enabled: true
       Line Style:
-        Line Width: 0.0299999993
+        Line Width: 0.029999999329447746
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -51,28 +49,28 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 160
       Reference Frame: uwb
-      Value: false
-    - Class: rviz/Axes
-      Enabled: true
-      Length: 1
-      Name: Axes
-      Radius: 0.100000001
-      Reference Frame: map
       Value: true
-
+    - Alpha: 1
+      Class: rviz/Axes
+      Enabled: true
+      Length: 0.5
+      Name: Axes
+      Radius: 0.019999999552965164
+      Reference Frame: map
+      Show Trail: false
+      Value: true
     - Class: rviz/Group
       Displays:
-
         - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
           Color: 255; 85; 0
           Enabled: true
-          Head Diameter: 0.300000012
-          Head Length: 0.200000003
-          Length: 0.300000012
+          Head Diameter: 0.30000001192092896
+          Head Length: 0.20000000298023224
+          Length: 0.30000001192092896
           Line Style: Billboards
-          Line Width: 0.1
+          Line Width: 0.009999999776482582
           Name: odomPath_001
           Offset:
             X: 0
@@ -80,33 +78,58 @@ Visualization Manager:
             Z: 0
           Pose Color: 255; 85; 255
           Pose Style: None
-          Radius: 0.0299999993
-          Shaft Diameter: 0.100000001
-          Shaft Length: 0.100000001
+          Queue Size: 10
+          Radius: 0.029999999329447746
+          Shaft Diameter: 0.10000000149011612
+          Shaft Length: 0.10000000149011612
           Topic: path_global_001
           Unreliable: false
           Value: true
-        - Angle Tolerance: 0.1
+        - Angle Tolerance: 0.10000000149011612
           Class: rviz/Odometry
-          Color: 221; 200; 14
+          Covariance:
+            Orientation:
+              Alpha: 0.5
+              Color: 255; 255; 127
+              Color Style: Unique
+              Frame: Local
+              Offset: 1
+              Scale: 1
+              Value: true
+            Position:
+              Alpha: 0.30000001192092896
+              Color: 204; 51; 204
+              Scale: 1
+              Value: true
+            Value: true
           Enabled: false
           Keep: 100
-          Length: 0.6
           Name: Odometry_001
-          Position Tolerance: 0.1
+          Position Tolerance: 0.10000000149011612
+          Queue Size: 10
+          Shape:
+            Alpha: 1
+            Axes Length: 1
+            Axes Radius: 0.10000000149011612
+            Color: 255; 25; 0
+            Head Length: 0.30000001192092896
+            Head Radius: 0.10000000149011612
+            Shaft Length: 1
+            Shaft Radius: 0.05000000074505806
+            Value: Arrow
           Topic: odom_global_001
-          Value: true
-
+          Unreliable: false
+          Value: false
         - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
           Color: 0; 255; 0
           Enabled: true
-          Head Diameter: 0.300000012
-          Head Length: 0.200000003
-          Length: 0.300000012
+          Head Diameter: 0.30000001192092896
+          Head Length: 0.20000000298023224
+          Length: 0.30000001192092896
           Line Style: Billboards
-          Line Width: 0.1
+          Line Width: 0.009999999776482582
           Name: odomPath_002
           Offset:
             X: 0
@@ -114,33 +137,58 @@ Visualization Manager:
             Z: 0
           Pose Color: 255; 85; 255
           Pose Style: None
-          Radius: 0.0299999993
-          Shaft Diameter: 0.100000001
-          Shaft Length: 0.100000001
+          Queue Size: 10
+          Radius: 0.029999999329447746
+          Shaft Diameter: 0.10000000149011612
+          Shaft Length: 0.10000000149011612
           Topic: path_global_002
           Unreliable: false
           Value: true
-        - Angle Tolerance: 0.1
+        - Angle Tolerance: 0.10000000149011612
           Class: rviz/Odometry
-          Color: 221; 200; 14
+          Covariance:
+            Orientation:
+              Alpha: 0.5
+              Color: 255; 255; 127
+              Color Style: Unique
+              Frame: Local
+              Offset: 1
+              Scale: 1
+              Value: true
+            Position:
+              Alpha: 0.30000001192092896
+              Color: 204; 51; 204
+              Scale: 1
+              Value: true
+            Value: true
           Enabled: false
           Keep: 100
-          Length: 0.6
           Name: Odometry_002
-          Position Tolerance: 0.1
+          Position Tolerance: 0.10000000149011612
+          Queue Size: 10
+          Shape:
+            Alpha: 1
+            Axes Length: 1
+            Axes Radius: 0.10000000149011612
+            Color: 255; 25; 0
+            Head Length: 0.30000001192092896
+            Head Radius: 0.10000000149011612
+            Shaft Length: 1
+            Shaft Radius: 0.05000000074505806
+            Value: Arrow
           Topic: odom_global_002
-          Value: true
-
+          Unreliable: false
+          Value: false
         - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
           Color: 0; 0; 255
           Enabled: true
-          Head Diameter: 0.300000012
-          Head Length: 0.200000003
-          Length: 0.300000012
+          Head Diameter: 0.30000001192092896
+          Head Length: 0.20000000298023224
+          Length: 0.30000001192092896
           Line Style: Billboards
-          Line Width: 0.1
+          Line Width: 0.009999999776482582
           Name: odomPath_003
           Offset:
             X: 0
@@ -148,33 +196,58 @@ Visualization Manager:
             Z: 0
           Pose Color: 255; 85; 255
           Pose Style: None
-          Radius: 0.0299999993
-          Shaft Diameter: 0.100000001
-          Shaft Length: 0.100000001
+          Queue Size: 10
+          Radius: 0.029999999329447746
+          Shaft Diameter: 0.10000000149011612
+          Shaft Length: 0.10000000149011612
           Topic: path_global_003
           Unreliable: false
           Value: true
-        - Angle Tolerance: 0.1
+        - Angle Tolerance: 0.10000000149011612
           Class: rviz/Odometry
-          Color: 221; 200; 14
+          Covariance:
+            Orientation:
+              Alpha: 0.5
+              Color: 255; 255; 127
+              Color Style: Unique
+              Frame: Local
+              Offset: 1
+              Scale: 1
+              Value: true
+            Position:
+              Alpha: 0.30000001192092896
+              Color: 204; 51; 204
+              Scale: 1
+              Value: true
+            Value: true
           Enabled: false
           Keep: 100
-          Length: 0.6
           Name: Odometry_003
-          Position Tolerance: 0.1
+          Position Tolerance: 0.10000000149011612
+          Queue Size: 10
+          Shape:
+            Alpha: 1
+            Axes Length: 1
+            Axes Radius: 0.10000000149011612
+            Color: 255; 25; 0
+            Head Length: 0.30000001192092896
+            Head Radius: 0.10000000149011612
+            Shaft Length: 1
+            Shaft Radius: 0.05000000074505806
+            Value: Arrow
           Topic: odom_global_003
-          Value: true
-
+          Unreliable: false
+          Value: false
         - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
           Color: 255; 85; 0
           Enabled: true
-          Head Diameter: 0.300000012
-          Head Length: 0.200000003
-          Length: 0.300000012
+          Head Diameter: 0.30000001192092896
+          Head Length: 0.20000000298023224
+          Length: 0.30000001192092896
           Line Style: Billboards
-          Line Width: 0.1
+          Line Width: 0.009999999776482582
           Name: odomPath_004
           Offset:
             X: 0
@@ -182,33 +255,58 @@ Visualization Manager:
             Z: 0
           Pose Color: 255; 85; 255
           Pose Style: None
-          Radius: 0.0299999993
-          Shaft Diameter: 0.100000001
-          Shaft Length: 0.100000001
+          Queue Size: 10
+          Radius: 0.029999999329447746
+          Shaft Diameter: 0.10000000149011612
+          Shaft Length: 0.10000000149011612
           Topic: path_global_004
           Unreliable: false
           Value: true
-        - Angle Tolerance: 0.1
+        - Angle Tolerance: 0.10000000149011612
           Class: rviz/Odometry
-          Color: 221; 200; 14
+          Covariance:
+            Orientation:
+              Alpha: 0.5
+              Color: 255; 255; 127
+              Color Style: Unique
+              Frame: Local
+              Offset: 1
+              Scale: 1
+              Value: true
+            Position:
+              Alpha: 0.30000001192092896
+              Color: 204; 51; 204
+              Scale: 1
+              Value: true
+            Value: true
           Enabled: false
           Keep: 100
-          Length: 0.6
           Name: Odometry_004
-          Position Tolerance: 0.1
+          Position Tolerance: 0.10000000149011612
+          Queue Size: 10
+          Shape:
+            Alpha: 1
+            Axes Length: 1
+            Axes Radius: 0.10000000149011612
+            Color: 255; 25; 0
+            Head Length: 0.30000001192092896
+            Head Radius: 0.10000000149011612
+            Shaft Length: 1
+            Shaft Radius: 0.05000000074505806
+            Value: Arrow
           Topic: odom_global_004
-          Value: true
-
+          Unreliable: false
+          Value: false
         - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
           Color: 0; 255; 0
           Enabled: true
-          Head Diameter: 0.300000012
-          Head Length: 0.200000003
-          Length: 0.300000012
+          Head Diameter: 0.30000001192092896
+          Head Length: 0.20000000298023224
+          Length: 0.30000001192092896
           Line Style: Billboards
-          Line Width: 0.1
+          Line Width: 0.009999999776482582
           Name: odomPath_005
           Offset:
             X: 0
@@ -216,33 +314,58 @@ Visualization Manager:
             Z: 0
           Pose Color: 255; 85; 255
           Pose Style: None
-          Radius: 0.0299999993
-          Shaft Diameter: 0.100000001
-          Shaft Length: 0.100000001
+          Queue Size: 10
+          Radius: 0.029999999329447746
+          Shaft Diameter: 0.10000000149011612
+          Shaft Length: 0.10000000149011612
           Topic: path_global_005
           Unreliable: false
           Value: true
-        - Angle Tolerance: 0.1
+        - Angle Tolerance: 0.10000000149011612
           Class: rviz/Odometry
-          Color: 221; 200; 14
+          Covariance:
+            Orientation:
+              Alpha: 0.5
+              Color: 255; 255; 127
+              Color Style: Unique
+              Frame: Local
+              Offset: 1
+              Scale: 1
+              Value: true
+            Position:
+              Alpha: 0.30000001192092896
+              Color: 204; 51; 204
+              Scale: 1
+              Value: true
+            Value: true
           Enabled: false
           Keep: 100
-          Length: 0.6
           Name: Odometry_005
-          Position Tolerance: 0.1
+          Position Tolerance: 0.10000000149011612
+          Queue Size: 10
+          Shape:
+            Alpha: 1
+            Axes Length: 1
+            Axes Radius: 0.10000000149011612
+            Color: 255; 25; 0
+            Head Length: 0.30000001192092896
+            Head Radius: 0.10000000149011612
+            Shaft Length: 1
+            Shaft Radius: 0.05000000074505806
+            Value: Arrow
           Topic: odom_global_005
-          Value: true
-
+          Unreliable: false
+          Value: false
         - Alpha: 1
           Buffer Length: 1
           Class: rviz/Path
           Color: 0; 0; 255
           Enabled: true
-          Head Diameter: 0.300000012
-          Head Length: 0.200000003
-          Length: 0.300000012
+          Head Diameter: 0.30000001192092896
+          Head Length: 0.20000000298023224
+          Length: 0.30000001192092896
           Line Style: Billboards
-          Line Width: 0.1
+          Line Width: 0.009999999776482582
           Name: odomPath_006
           Offset:
             X: 0
@@ -250,29 +373,159 @@ Visualization Manager:
             Z: 0
           Pose Color: 255; 85; 255
           Pose Style: None
-          Radius: 0.0299999993
-          Shaft Diameter: 0.100000001
-          Shaft Length: 0.100000001
+          Queue Size: 10
+          Radius: 0.029999999329447746
+          Shaft Diameter: 0.10000000149011612
+          Shaft Length: 0.10000000149011612
           Topic: path_global_006
           Unreliable: false
           Value: true
-        - Angle Tolerance: 0.1
+        - Angle Tolerance: 0.10000000149011612
           Class: rviz/Odometry
-          Color: 221; 200; 14
+          Covariance:
+            Orientation:
+              Alpha: 0.5
+              Color: 255; 255; 127
+              Color Style: Unique
+              Frame: Local
+              Offset: 1
+              Scale: 1
+              Value: true
+            Position:
+              Alpha: 0.30000001192092896
+              Color: 204; 51; 204
+              Scale: 1
+              Value: true
+            Value: true
           Enabled: false
           Keep: 100
-          Length: 0.6
           Name: Odometry_006
-          Position Tolerance: 0.1
+          Position Tolerance: 0.10000000149011612
+          Queue Size: 10
+          Shape:
+            Alpha: 1
+            Axes Length: 1
+            Axes Radius: 0.10000000149011612
+            Color: 255; 25; 0
+            Head Length: 0.30000001192092896
+            Head Radius: 0.10000000149011612
+            Shaft Length: 1
+            Shaft Radius: 0.05000000074505806
+            Value: Arrow
           Topic: odom_global_006
-          Value: true
-
+          Unreliable: false
+          Value: false
       Enabled: true
       Name: path
-
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /wall_marker
+      Name: Marker
+      Namespaces:
+        point_wall: true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker_001
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker_002
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker_003
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker_004
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker_005
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker_006
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        drone1_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        drone2_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        drone3_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        drone4_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        drone5_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        drone6_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+      Name: RobotModel
+      Robot Description: robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
   Enabled: true
   Global Options:
-    Background Color: 0; 0; 0
+    Background Color: 255; 255; 215
     Default Light: true
     Fixed Frame: uwb
     Frame Rate: 30
@@ -285,9 +538,12 @@ Visualization Manager:
     - Class: rviz/FocusCamera
     - Class: rviz/Measure
     - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
       Topic: /initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
     - Class: rviz/SetGoal
-      Topic: /move_base_simple/goal
+      Topic: /move_base_simple/goal_temp
     - Class: rviz/PublishPoint
       Single click: true
       Topic: /clicked_point
@@ -295,35 +551,35 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 20.1141529
+      Distance: 7.370485305786133
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.0599999987
+        Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
+      Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.675796986
-        Y: 1.08226371
-        Z: -2.30979848
+        X: 0.18533658981323242
+        Y: -0.03134655952453613
+        Z: -2.3097970485687256
       Focal Shape Fixed Size: true
-      Focal Shape Size: 0.0500000007
+      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
-      Near Clip Distance: 0.00999999978
-      Pitch: 0.484797001
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.7797968983650208
       Target Frame: body
-      Value: XYOrbit (rviz)
-      Yaw: 4.52999926
+      Yaw: 2.489973306655884
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1056
+  Height: 1618
   Hide Left Dock: false
-  Hide Right Dock: true
-  Image:
+  Hide Right Dock: false
+  MultiNaviGoalsPanel:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000016a00000396fc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000028000002c6000000d700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d00610067006501000002f4000000ca0000001600ffffff000000010000010f00000396fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000002800000396000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073f0000003efc0100000002fb0000000800540069006d006501000000000000073f0000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000005cf0000039600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001a8000005b9fc0200000009fb000000100044006900730070006c006100790073010000003d000001d3000000c900fffffffb00000026004d0075006c00740069004e0061007600690047006f0061006c007300500061006e0065006c0100000216000003e00000034400fffffffb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d00610067006501000002f4000000ca0000000000000000000000010000010f000005b9fc0200000003fb0000001e0054006f006f006c002000500072006f0070006500720074006900650073010000003d000002060000005c00fffffffb0000000a005600690065007700730100000249000003ad000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000b040000024cfc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000b0400000039fc0100000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000000000001a40000000000000000fb0000000800540069006d0065010000000000000b04000003bc00fffffffb0000000800540069006d0065010000000000000450000000000000000000000841000005b900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -331,7 +587,7 @@ Window Geometry:
   Tool Properties:
     collapsed: false
   Views:
-    collapsed: true
-  Width: 1855
-  X: 65
-  Y: 24
+    collapsed: false
+  Width: 2820
+  X: 72
+  Y: 27
