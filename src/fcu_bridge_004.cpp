@@ -25,6 +25,7 @@
 using namespace std;
 #define BUF_SIZE 32768//数据缓存区大小
 #define DRONE_PORT 333 //port
+static int drone_port=DRONE_PORT;
 static int bandrate=460800;//虚拟串口波特率
 static string drone_ip = "192.168.0.204"; //ip
 static string usb_port = "/dev/ttyACM0"; //usb虚拟串口文件描述符
@@ -163,6 +164,16 @@ void mav_send_land(void){
   command_long.command=MAV_CMD_NAV_LAND;
   mavlink_msg_command_long_encode(mavlink_system.sysid, mavlink_system.compid, &msg_command_long, &command_long);
   mavlink_send_msg(mav_chan, &msg_command_long);
+}
+
+//追踪
+void mav_send_follow(float mode){
+	mavlink_message_t msg_command_long;
+	mavlink_command_long_t command_long;
+	command_long.command=MAV_CMD_DO_FOLLOW;
+	command_long.param1=mode;
+	mavlink_msg_command_long_encode(mavlink_system.sysid, mavlink_system.compid, &msg_command_long, &command_long);
+	mavlink_send_msg(mav_chan, &msg_command_long);
 }
 
 //设置目标。注意：这里输入的目标都是全局坐标系下的目标值
@@ -434,6 +445,15 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
     case 4:
         mav_send_land();
         break;
+    case 1011:
+        mav_send_follow(1.0f);
+        break;
+    case 1012:
+        mav_send_follow(2.0f);
+        break;
+    case 1013:
+        mav_send_follow(3.0f);
+        break;
     default:
         break;
   }
@@ -482,6 +502,7 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "fcu_bridge_004");
   ros::NodeHandle nh("~");
   nh.param("DRONE_IP", drone_ip, string("192.168.0.204"));
+  nh.param("DRONE_PORT", drone_port, 333);
   nh.param("USB_PORT", usb_port, string("/dev/ttyACM0"));
   nh.param("BANDRATE", bandrate, 460800);
   nh.param("channel", channel, 1);
@@ -540,7 +561,7 @@ int main(int argc, char **argv) {
 
     memset(&drone_addr, 0, sizeof(drone_addr));
     drone_addr.sin_family      = AF_INET;
-    drone_addr.sin_port        = htons(DRONE_PORT);
+    drone_addr.sin_port        = htons(drone_port);
     drone_addr.sin_addr.s_addr = inet_addr(drone_ip.c_str());
     printf("fcu_bridge 004 connecting...\n");
 

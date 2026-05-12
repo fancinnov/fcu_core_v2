@@ -22,7 +22,11 @@ static bool enable_track=false;
 static bool get_pos_cmd=false;
 static bool follow_forward=false;
 static bool follow_down=false;
+static bool follow_free=false;
+static bool surround=false;
+static bool hover=false;
 static bool set_goal=false;
+static bool auto_follow=false;
 static bool use_goal_001=false;
 static bool use_goal_002=false;
 static bool use_goal_003=false;
@@ -30,6 +34,10 @@ static bool use_goal_004=false;
 static bool use_goal_005=false;
 static bool use_goal_006=false;
 static uint8_t enable_pos=0;
+static double time_hover=0.0f;
+float goal_last_x=0.0f; float goal_last_y=0.0f; float goal_last_z=0.0f;
+ros::Publisher goal;
+geometry_msgs::PoseStamped goal_pub;
 float pos_odom_001_x=0.0f; float pos_odom_001_y=0.0f; float pos_odom_001_z=0.0f;
 float pos_odom_002_x=0.0f; float pos_odom_002_y=0.0f; float pos_odom_002_z=0.0f;
 float pos_odom_003_x=0.0f; float pos_odom_003_y=0.0f; float pos_odom_003_z=0.0f;
@@ -144,13 +152,32 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
         break;
     case 1001:
         follow_forward=true;
+        auto_follow=true;
         break;
     case 1002:
         follow_down=true;
+        auto_follow=true;
         break;
     case 1003:
         follow_forward=false;
         follow_down=false;
+        follow_free=false;
+        auto_follow==false;
+        break;
+    case 1004:
+        auto_follow=true;
+        surround=true;
+        enable_pos=255;
+        break;
+    case 1005:
+        follow_free=true;
+        auto_follow=true;
+        break;
+    case 1006:
+        auto_follow=true;
+        hover=true;
+        enable_pos=255;
+        time_hover=ros::Time::now().toSec();
         break;
     case 1011:
         get_pos_cmd=true;
@@ -160,6 +187,9 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
         break;
     case 1013:
         get_pos_cmd=false;
+        break;
+    case 1015:
+        get_pos_cmd=true;
         break;
     case 1101:
         pos_takeoff_001_x=pos_odom_001_x; pos_takeoff_001_y=pos_odom_001_y; pos_takeoff_001_z=pos_odom_001_z; pos_takeoff_001_yaw=pos_odom_001_yaw;
@@ -207,36 +237,42 @@ void SetGoal(int id, float target_x,float target_y,float target_z, float target_
     py1=target_y;
     pz1=target_z;
     yaw1=target_yaw;
+    use_goal_001=true;
     break;
   case 2://2号机
     px2=target_x;
     py2=target_y;
     pz2=target_z;
     yaw2=target_yaw;
+    use_goal_002=true;
     break;
   case 3://3号机
     px3=target_x;
     py3=target_y;
     pz3=target_z;
     yaw3=target_yaw;
+    use_goal_003=true;
     break;
   case 4://4号机
     px4=target_x;
     py4=target_y;
     pz4=target_z;
     yaw4=target_yaw;
+    use_goal_004=true;
     break;
   case 5://5号机
     px5=target_x;
     py5=target_y;
     pz5=target_z;
     yaw5=target_yaw;
+    use_goal_005=true;
     break;
   case 6://6号机
     px6=target_x;
     py6=target_y;
     pz6=target_z;
     yaw6=target_yaw;
+    use_goal_006=true;
     break;
   default:
     break;
@@ -284,7 +320,7 @@ bool IsReachGoal(int id, float dis)
 }
 
 void execute_mission_001(const ros::TimerEvent &event){
-  if(get_pos_cmd){
+  if(get_pos_cmd&&!surround){
       return;
   }
   if(set_goal&&!use_goal_001){
@@ -314,7 +350,7 @@ void execute_mission_001(const ros::TimerEvent &event){
 static std_msgs::Float32MultiArray mission_002;
 static ros::Publisher mission_pub_002;
 void execute_mission_002(const ros::TimerEvent &event){
-  if(get_pos_cmd){
+  if(get_pos_cmd&&!surround){
       return;
   }
   if(set_goal&&!use_goal_002){
@@ -344,7 +380,7 @@ void execute_mission_002(const ros::TimerEvent &event){
 static std_msgs::Float32MultiArray mission_003;
 static ros::Publisher mission_pub_003;
 void execute_mission_003(const ros::TimerEvent &event){
-  if(get_pos_cmd){
+  if(get_pos_cmd&&!surround){
       return;
   }
   if(set_goal&&!use_goal_003){
@@ -374,7 +410,7 @@ void execute_mission_003(const ros::TimerEvent &event){
 static std_msgs::Float32MultiArray mission_004;
 static ros::Publisher mission_pub_004;
 void execute_mission_004(const ros::TimerEvent &event){
-  if(get_pos_cmd){
+  if(get_pos_cmd&&!surround){
       return;
   }
   if(set_goal&&!use_goal_004){
@@ -404,7 +440,7 @@ void execute_mission_004(const ros::TimerEvent &event){
 static std_msgs::Float32MultiArray mission_005;
 static ros::Publisher mission_pub_005;
 void execute_mission_005(const ros::TimerEvent &event){
-  if(get_pos_cmd){
+  if(get_pos_cmd&&!surround){
       return;
   }
   if(set_goal&&!use_goal_005){
@@ -434,7 +470,7 @@ void execute_mission_005(const ros::TimerEvent &event){
 static std_msgs::Float32MultiArray mission_006;
 static ros::Publisher mission_pub_006;
 void execute_mission_006(const ros::TimerEvent &event){
-  if(get_pos_cmd){
+  if(get_pos_cmd&&!surround){
       return;
   }
   if(set_goal&&!use_goal_006){
@@ -547,7 +583,7 @@ void odom_global006_handler(const nav_msgs::Odometry::ConstPtr& odom)
 
 void pos_cmd_handler(const quadrotor_msgs::PositionCommand::ConstPtr& pose_plan)//仅机载电脑运行此函数
 {
-  if(follow_forward||follow_down){
+  if(follow_forward||follow_down||hover){
     return;
   }
   //发布mission
@@ -627,11 +663,40 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
     mission_001.data[9]=0.0f;//ay
     mission_001.data[10]=0.0f;//az
     mission_pub_001.publish(mission_001);
+  }else if(follow_free){
+    get_pos_cmd=true;
+    //发布mission
+    if(follow->data[2]==0.0f&&follow->data[3]==0.0f){
+      printf("No tracking!\n");
+      return;
+    }
+    float global_dx = follow->data[2] * cosf(pos_odom_001_yaw) - follow->data[3] * sinf(pos_odom_001_yaw);
+    float global_dy = follow->data[2] * sinf(pos_odom_001_yaw) + follow->data[3] * cosf(pos_odom_001_yaw);
+    mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
+    mission_001.layout.dim[0].label = "mission_001";
+    mission_001.layout.dim[0].size = 11;
+    mission_001.layout.dim[0].stride = 1;
+    mission_001.data.resize(11);
+    mission_001.data[0]=pos_odom_001_yaw+follow->data[0];//rad
+    mission_001.data[1]=0.0f;//rad/s
+    mission_001.data[2]=pos_odom_001_x+global_dx;//x
+    mission_001.data[3]=pos_odom_001_y+global_dy;//y
+    mission_001.data[4]=pos_odom_001_z+follow->data[4];//z
+    mission_001.data[5]=0.0f;//vx
+    mission_001.data[6]=0.0f;//vy
+    mission_001.data[7]=follow->data[4]*0.1;//vz
+    mission_001.data[8]=0.0f;//ax
+    mission_001.data[9]=0.0f;//ay
+    mission_001.data[10]=0.0f;//az
+    mission_pub_001.publish(mission_001); 
   }
 }
 
 void goal_001_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 {
+  if(auto_follow){
+    return;
+  }
   float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
   float quaternion_odom[4]={(float)goal->pose.orientation.w,
                             (float)goal->pose.orientation.x,
@@ -655,6 +720,9 @@ void goal_001_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 
 void goal_002_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 {
+  if(auto_follow){
+    return;
+  }
   float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
   float quaternion_odom[4]={(float)goal->pose.orientation.w,
                             (float)goal->pose.orientation.x,
@@ -678,6 +746,9 @@ void goal_002_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 
 void goal_003_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 {
+  if(auto_follow){
+    return;
+  }
   float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
   float quaternion_odom[4]={(float)goal->pose.orientation.w,
                             (float)goal->pose.orientation.x,
@@ -701,6 +772,9 @@ void goal_003_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 
 void goal_004_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 {
+  if(auto_follow){
+    return;
+  }
   float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
   float quaternion_odom[4]={(float)goal->pose.orientation.w,
                             (float)goal->pose.orientation.x,
@@ -724,6 +798,9 @@ void goal_004_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 
 void goal_005_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 {
+  if(auto_follow){
+    return;
+  }
   float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
   float quaternion_odom[4]={(float)goal->pose.orientation.w,
                             (float)goal->pose.orientation.x,
@@ -747,6 +824,9 @@ void goal_005_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 
 void goal_006_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
 {
+  if(auto_follow){
+    return;
+  }
   float goal_roll=0.0, goal_pitch=0.0, goal_yaw=0.0;
   float quaternion_odom[4]={(float)goal->pose.orientation.w,
                             (float)goal->pose.orientation.x,
@@ -768,11 +848,18 @@ void goal_006_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
   set_goal=true;
 }
 
+void egoHandler(const geometry_msgs::PoseStamped::ConstPtr& goal){
+  goal_last_x=goal->pose.position.x;//x //FLU坐标
+  goal_last_y=goal->pose.position.y;//y
+  goal_last_z=goal->pose.position.z;//z
+}
+
 int main(int argc, char **argv) {
 
   ros::init(argc, argv, "fcu_mission");
   ros::NodeHandle nh("~");
   ros::Subscriber comm=nh.subscribe<std_msgs::Int16>("/fcu_command/command", 100, cmdHandler);
+  ros::Subscriber ego_goal=nh.subscribe<geometry_msgs::PoseStamped>("/move_base_simple/goal", 100, egoHandler);
   ros::Subscriber odom001=nh.subscribe<nav_msgs::Odometry>("odom_global_001", 100, odom_global001_handler);
   ros::Subscriber odom002=nh.subscribe<nav_msgs::Odometry>("odom_global_002", 100, odom_global002_handler);
   ros::Subscriber odom003=nh.subscribe<nav_msgs::Odometry>("odom_global_003", 100, odom_global003_handler);
@@ -793,6 +880,7 @@ int main(int argc, char **argv) {
   mission_pub_004 = nh.advertise<std_msgs::Float32MultiArray>("mission_004",100);
   mission_pub_005 = nh.advertise<std_msgs::Float32MultiArray>("mission_005",100);
   mission_pub_006 = nh.advertise<std_msgs::Float32MultiArray>("mission_006",100);
+  goal=nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 100);
   ros::Timer timer_mission_001 = nh.createTimer(ros::Duration(0.1),execute_mission_001,false);
   ros::Timer timer_mission_002 = nh.createTimer(ros::Duration(0.1),execute_mission_002,false);
   ros::Timer timer_mission_003 = nh.createTimer(ros::Duration(0.1),execute_mission_003,false);
@@ -959,6 +1047,37 @@ int main(int argc, char **argv) {
 
               break;
           default:
+              if(surround){
+                theta=atan2(pos_odom_001_y-pos_odom_004_y, pos_odom_001_x-pos_odom_004_x);
+
+                yaw1=atan2(pos_odom_004_y-pos_odom_001_y, pos_odom_004_x-pos_odom_001_x);
+                px1=2.0*cosf(theta)+pos_odom_004_x;
+                py1=2.0*sinf(theta)+pos_odom_004_y;
+                pz1=pos_odom_004_z;
+
+                yaw2=atan2(pos_odom_004_y-pos_odom_002_y, pos_odom_004_x-pos_odom_002_x);
+                px2=2.0*cosf(theta+M_PI*2/3)+pos_odom_004_x;
+                py2=2.0*sinf(theta+M_PI*2/3)+pos_odom_004_y;
+                pz2=pos_odom_004_z;
+
+                yaw3=atan2(pos_odom_004_y-pos_odom_003_y, pos_odom_004_x-pos_odom_003_x);
+                px3=2.0*cosf(theta-M_PI*2/3)+pos_odom_004_x;
+                py3=2.0*sinf(theta-M_PI*2/3)+pos_odom_004_y;
+                pz3=pos_odom_004_z;
+              }else if(hover){
+                //悬停5s后重新发布ego目标
+                if(ros::Time::now().toSec()-time_hover>5.0){
+                  goal_pub.header.frame_id = "map";
+                  goal_pub.header.stamp = ros::Time::now();
+                  goal_pub.pose.position.x=goal_last_x;
+                  goal_pub.pose.position.y=goal_last_y;
+                  goal_pub.pose.position.z=goal_last_z;
+                  goal.publish(goal_pub);
+                  if(ros::Time::now().toSec()-time_hover>8.0){
+                    hover=false;
+                  }
+                }
+              }
               break;
         }
     }

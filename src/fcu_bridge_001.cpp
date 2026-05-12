@@ -3,6 +3,7 @@
 #include <serial/serial.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <sensor_msgs/BatteryState.h>
 #include <nav_msgs/Odometry.h>
 #include <nav_msgs/Path.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -25,6 +26,7 @@
 using namespace std;
 #define BUF_SIZE 32768//数据缓存区大小
 #define DRONE_PORT 333 //port
+static int drone_port=DRONE_PORT;
 static int bandrate=460800;//虚拟串口波特率
 static string drone_ip = "192.168.0.201"; //ip
 static string usb_port = "/dev/ttyACM0"; //usb虚拟串口文件描述符
@@ -59,7 +61,7 @@ static double time_start=0.0f;
 static double time_odom=0.0f;
 static bool armed=false;
 static bool get_gnss_origin=false;
-
+ros::Subscriber gnss_origin;
 ros::Publisher gnss_global;
 ros::Publisher imu_global;
 ros::Publisher odom_global;
@@ -71,9 +73,10 @@ ros::Subscriber motion;
 ros::Publisher path_global;
 ros::Publisher goal;
 ros::Publisher command;
-
+ros::Publisher battery;
 std_msgs::Int16 cmd_pub;
 sensor_msgs::NavSatFix gnss_pub;
+sensor_msgs::BatteryState batt_pub;
 sensor_msgs::Imu imu_pub;
 nav_msgs::Odometry odom_pub;
 nav_msgs::Path path_pub;
@@ -250,12 +253,16 @@ void parse_data(void){
               mavlink_msg_heartbeat_decode(&msg_received, &heartbeat);
               if((heartbeat.base_mode&MAV_MODE_FLAG_SAFETY_ARMED)==0){
                 armed=false;
+                cmd_pub.data=2001;
+                command.publish(cmd_pub);
               }else{
                 if(!armed){
                   cmd_pub.data=1101;
                   command.publish(cmd_pub);
                 }
                 armed=true;
+                cmd_pub.data=2002;
+                command.publish(cmd_pub);
               }
 						  printf("001 Received heartbeat time: %fs, voltage:%fV, current:%fA, sat:%d, gnss:%d\n", ros::Time::now().toSec()-time_start, (double)batt.voltages[1]/1000, (double)batt.current_battery/100, position.hdg&0xFF, position.hdg>>12);
 							mav_send_heartbeat();
@@ -263,6 +270,11 @@ void parse_data(void){
 
 						case MAVLINK_MSG_ID_BATTERY_STATUS:
 							mavlink_msg_battery_status_decode(&msg_received, &batt);
+              batt_pub.header.stamp = ros::Time::now();
+              batt_pub.header.frame_id = "battery";
+              batt_pub.voltage = (double)batt.voltages[1]/1000;
+              batt_pub.current = (double)batt.current_battery/100;
+              battery.publish(batt_pub);
 							break;
             case MAVLINK_MSG_ID_COMMAND_LONG:
               mavlink_msg_command_long_decode(&msg_received, &cmd_long);
@@ -281,6 +293,11 @@ void parse_data(void){
                   }else if(cmd_long.param1==3.0f){//停止追踪
                     if(offboard){
                       cmd_pub.data=1003;
+                      command.publish(cmd_pub);
+                    }
+                  }else if(cmd_long.param1==5.0f){//自由追踪
+                    if(offboard){
+                      cmd_pub.data=1005;
                       command.publish(cmd_pub);
                     }
                   }
@@ -312,6 +329,7 @@ void parse_data(void){
               gnss_pub.latitude = (double)position.lat*1e-7;
               gnss_pub.longitude = (double)position.lon*1e-7;
               gnss_pub.altitude = (double)position.alt*1e-3;
+              gnss_pub.status.service = position.hdg;
               gnss_global.publish(gnss_pub);
               break;
 
@@ -321,6 +339,8 @@ void parse_data(void){
                  set_gps_global_origin.longitude==gps_global_origin.longitude&&
                  set_gps_global_origin.altitude==gps_global_origin.altitude ){
                 get_gnss_origin=true;
+                cmd_pub.data=2003;
+                command.publish(cmd_pub);
               }
               break;
 
@@ -494,6 +514,9 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
     case 1013:
         mav_send_follow(3.0f);
         break;
+    case 1015:
+        mav_send_follow(5.0f);
+        break;
     default:
         break;
   }
@@ -526,7 +549,7 @@ void missionHandler(const std_msgs::Float32MultiArray::ConstPtr& mission){
 }
 
 void gnssHandler(const sensor_msgs::NavSatFix::ConstPtr& gnss){
-  if(gnss->latitude==0.0f||gnss->longitude==0.0f||get_gnss_origin){
+  if(gnss->latitude==0.0f||gnss->longitude==0.0f||get_gnss_origin||offboard){
     return;
   }
   mavlink_message_t msg_gnss_origin;
@@ -534,7 +557,16 @@ void gnssHandler(const sensor_msgs::NavSatFix::ConstPtr& gnss){
 	gps_global_origin.longitude=gnss->longitude*1e7;
 	gps_global_origin.altitude=gnss->altitude*100;//m->cm
 	mavlink_msg_set_gps_global_origin_encode(mavlink_system.sysid, mavlink_system.compid, &msg_gnss_origin, &gps_global_origin);
-	mavlink_send_msg(mav_chan, &msg_gnss_origin);
+	mavlink_send_msg(mav_chan, &msg_gnss_origin);//远程电脑发给飞控
+}
+
+void originHandler(const sensor_msgs::NavSatFix::ConstPtr& gnss){
+  mavlink_message_t msg_gnss_origin;
+	gps_global_origin.latitude=gnss->latitude*1e7;
+	gps_global_origin.longitude=gnss->longitude*1e7;
+	gps_global_origin.altitude=gnss->altitude*100;//m->cm
+	mavlink_msg_set_gps_global_origin_encode(mavlink_system.sysid, mavlink_system.compid, &msg_gnss_origin, &gps_global_origin);
+	mavlink_send_msg(mav_chan, &msg_gnss_origin);//机载电脑发给飞控
 }
 
 int main(int argc, char **argv) {
@@ -542,6 +574,7 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "fcu_bridge_001");
   ros::NodeHandle nh("~");
   nh.param("DRONE_IP", drone_ip, string("192.168.0.201"));
+  nh.param("DRONE_PORT", drone_port, 333);
   nh.param("USB_PORT", usb_port, string("/dev/ttyACM0"));
   nh.param("BANDRATE", bandrate, 460800);
   nh.param("channel", channel, 1);
@@ -558,8 +591,10 @@ int main(int argc, char **argv) {
 
   ros::Rate loop_rate(200);
   gnss_global = nh.advertise<sensor_msgs::NavSatFix>("gnss_global_001",100);
+  battery = nh.advertise<sensor_msgs::BatteryState>("battery_state", 10);
   imu_global = nh.advertise<sensor_msgs::Imu>("imu_global_001",100);
   odom_global = nh.advertise<nav_msgs::Odometry>("odom_global_001",100);
+  gnss_origin=nh.subscribe<sensor_msgs::NavSatFix>("gnss_origin",100, originHandler, ros::TransportHints().tcpNoDelay());
   gnss_001=nh.subscribe<sensor_msgs::NavSatFix>("gnss_global_001", 100, gnssHandler, ros::TransportHints().tcpNoDelay());
   odom=nh.subscribe<nav_msgs::Odometry>("odometry_001", 100, odomHandler, ros::TransportHints().tcpNoDelay());
   cmd=nh.subscribe<std_msgs::Int16>("command", 100, cmdHandler, ros::TransportHints().tcpNoDelay());
@@ -614,7 +649,7 @@ int main(int argc, char **argv) {
 
     memset(&drone_addr, 0, sizeof(drone_addr));
     drone_addr.sin_family      = AF_INET;
-    drone_addr.sin_port        = htons(DRONE_PORT);
+    drone_addr.sin_port        = htons(drone_port);
     drone_addr.sin_addr.s_addr = inet_addr(drone_ip.c_str());
     printf("fcu_bridge 001 connecting...\n");
 

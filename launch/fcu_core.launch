@@ -11,6 +11,7 @@
         <remap from="~command" to="/fcu_command/command"/>
         <remap from="~mission_001" to="/fcu_mission/mission_001"/>
         <param name="DRONE_IP" value="192.168.4.1" type="string"/>
+        <param name="DRONE_PORT" value="333"/>
         <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
         <param name="BANDRATE" value="460800"/>
         <param name="channel" value="1"/>
@@ -32,6 +33,7 @@
         <remap from="~command" to="/fcu_command/command"/>
         <remap from="~mission_002" to="/fcu_mission/mission_002"/>
         <param name="DRONE_IP" value="192.168.4.202" type="string"/>
+        <param name="DRONE_PORT" value="333"/>
         <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
         <param name="BANDRATE" value="460800"/>
         <param name="channel" value="1"/>
@@ -50,6 +52,7 @@
         <remap from="~command" to="/fcu_command/command"/>
         <remap from="~mission_003" to="/fcu_mission/mission_003"/>
         <param name="DRONE_IP" value="192.168.4.203" type="string"/>
+        <param name="DRONE_PORT" value="333"/>
         <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
         <param name="BANDRATE" value="460800"/>
         <param name="channel" value="1"/>
@@ -68,6 +71,7 @@
         <remap from="~command" to="/fcu_command/command"/>
         <remap from="~mission_004" to="/fcu_mission/mission_004"/>
         <param name="DRONE_IP" value="192.168.4.204" type="string"/>
+        <param name="DRONE_PORT" value="333"/>
         <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
         <param name="BANDRATE" value="460800"/>
         <param name="channel" value="1"/>
@@ -86,6 +90,7 @@
         <remap from="~command" to="/fcu_command/command"/>
         <remap from="~mission_005" to="/fcu_mission/mission_005"/>
         <param name="DRONE_IP" value="192.168.4.205" type="string"/>
+        <param name="DRONE_PORT" value="333"/>
         <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
         <param name="BANDRATE" value="460800"/>
         <param name="channel" value="1"/>
@@ -104,6 +109,7 @@
         <remap from="~command" to="/fcu_command/command"/>
         <remap from="~mission_006" to="/fcu_mission/mission_006"/>
         <param name="DRONE_IP" value="192.168.4.206" type="string"/>
+        <param name="DRONE_PORT" value="333"/>
         <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
         <param name="BANDRATE" value="460800"/>
         <param name="channel" value="1"/>
@@ -124,6 +130,44 @@
         <remap from="~odom_global_004" to="odom_global_004"/>
         <remap from="~odom_global_005" to="odom_global_005"/>
         <remap from="~odom_global_006" to="odom_global_006"/>
+    </node>
+
+    <node pkg="fcu_core" type="fcu_server_001" name="fcu_server_001" output="screen" >
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~odom_global_001" to="odom_global_001"/>
+        <remap from="~mission_001" to="/fcu_mission/mission_001"/>
+        <remap from="~goal_001" to="/move_base_simple/goal"/>
+        <param name="DRONE_PORT" value="10001"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_server_002" name="fcu_server_002" output="screen" >
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~odom_global_001" to="odom_global_001"/>
+        <remap from="~mission_001" to="/fcu_mission/mission_001"/>
+        <param name="DRONE_PORT" value="10002"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_server_003" name="fcu_server_003" output="screen" >
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~odom_global_001" to="odom_global_001"/>
+        <remap from="~mission_001" to="/fcu_mission/mission_001"/>
+        <param name="DRONE_PORT" value="10003"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_server_004" name="fcu_server_004" output="screen" >
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~odom_global_001" to="odom_global_001"/>
+        <remap from="~mission_001" to="/fcu_mission/mission_001"/>
+        <param name="DRONE_PORT" value="10004"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_server_005" name="fcu_server_005" output="screen" >
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~odom_global_001" to="odom_global_001"/>
+        <remap from="~mission_001" to="/fcu_mission/mission_001"/>
+        <param name="DRONE_PORT" value="10005"/>
+    </node>
+    <node pkg="fcu_core" type="fcu_server_006" name="fcu_server_006" output="screen" >
+        <remap from="~command" to="/fcu_command/command"/>
+        <remap from="~odom_global_001" to="odom_global_001"/>
+        <remap from="~mission_001" to="/fcu_mission/mission_001"/>
+        <param name="DRONE_PORT" value="10006"/>
     </node>
 
     <arg name="rviz" default="true" />

@@ -67,3 +67,21 @@ target_link_libraries(fcu_bridge_005 ${catkin_LIBRARIES} )
 
 add_executable(fcu_bridge_006 src/fcu_bridge_006.cpp)
 target_link_libraries(fcu_bridge_006 ${catkin_LIBRARIES} )
+
+add_executable(fcu_server_001 src/fcu_server_001.cpp)
+target_link_libraries(fcu_server_001 ${catkin_LIBRARIES} )
+
+add_executable(fcu_server_002 src/fcu_server_002.cpp)
+target_link_libraries(fcu_server_002 ${catkin_LIBRARIES} )
+
+add_executable(fcu_server_003 src/fcu_server_003.cpp)
+target_link_libraries(fcu_server_003 ${catkin_LIBRARIES} )
+
+add_executable(fcu_server_004 src/fcu_server_004.cpp)
+target_link_libraries(fcu_server_004 ${catkin_LIBRARIES} )
+
+add_executable(fcu_server_005 src/fcu_server_005.cpp)
+target_link_libraries(fcu_server_005 ${catkin_LIBRARIES} )
+
+add_executable(fcu_server_006 src/fcu_server_006.cpp)
+target_link_libraries(fcu_server_006 ${catkin_LIBRARIES} )

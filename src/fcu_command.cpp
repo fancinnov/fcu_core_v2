@@ -29,74 +29,79 @@ int main(int argc, char **argv) {
     }
     switch(buf[0]){
       case 'p':
-        printf("执行路径\n");
         cmd.data=0;
         command.publish(cmd);
+        printf("执行路径\n");
         break;
       case 'a':
-        printf("解锁\n");
         cmd.data=1;
         command.publish(cmd);
+        printf("解锁\n");
         break;
       case 'd':
-        printf("锁定\n");
         cmd.data=2;
         command.publish(cmd);
+        printf("锁定\n");
         break;
       case 't':
-        printf("起飞\n");
         cmd.data=3;
         command.publish(cmd);
+        printf("起飞\n");
         break;
       case 'l':
-        printf("降落\n");
         cmd.data=4;
         command.publish(cmd);
+        printf("降落\n");
         break;
       case 'r':
-        printf("运行\n");
         cmd.data=5;
         command.publish(cmd);
+        printf("运行\n");
         break;
       case 's':
-        printf("停止\n");
         cmd.data=6;
         command.publish(cmd);
+        printf("停止\n");
         break;
       case '1':
-        printf("位置点1\n");
         cmd.data=7;
         command.publish(cmd);
+        printf("位置点1\n");
         break;
       case '2':
-        printf("位置点2\n");
         cmd.data=8;
         command.publish(cmd);
+        printf("位置点2\n");
         break;
       case '3':
-        printf("位置点3\n");
         cmd.data=9;
         command.publish(cmd);
+        printf("位置点3\n");
         break;
       case '4':
-        printf("位置点4\n");
         cmd.data=10;
         command.publish(cmd);
+        printf("位置点4\n");
         break;
       case 'q':
-        printf("前向追踪\n");
         cmd.data=1011;
         command.publish(cmd);
+        printf("前向追踪\n");
         break;
       case 'w':
-        printf("下视追踪\n");
         cmd.data=1012;
         command.publish(cmd);
+        printf("下视追踪\n");
         break;
       case 'e':
-        printf("停止追踪\n");
         cmd.data=1013;
         command.publish(cmd);
+        printf("停止追踪\n");
+        break;
+      case 'z':
+        cmd.data=1015;
+        command.publish(cmd);
+        printf("自由追踪\n");
         break;
       default:
         printf("非法指令！\n");
