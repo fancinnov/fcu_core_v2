@@ -8,6 +8,7 @@
         <remap from="~path_target_001" to="path_target_001"/>
         <remap from="~goal_001" to="/move_base_simple/goal"/>
         <remap from="~motion_001" to="motion_001"/>
+        <remap from="~uwb_distance" to="uwb_distance"/>
         <remap from="~command" to="/fcu_command/command"/>
         <remap from="~mission_001" to="/fcu_mission/mission_001"/>
         <param name="DRONE_IP" value="192.168.4.1" type="string"/>

@@ -74,7 +74,9 @@ ros::Publisher path_global;
 ros::Publisher goal;
 ros::Publisher command;
 ros::Publisher battery;
+ros::Publisher uwb_distance;
 std_msgs::Int16 cmd_pub;
+std_msgs::Float32MultiArray uwb_distance_pub;
 sensor_msgs::NavSatFix gnss_pub;
 sensor_msgs::BatteryState batt_pub;
 sensor_msgs::Imu imu_pub;
@@ -301,6 +303,13 @@ void parse_data(void){
                       command.publish(cmd_pub);
                     }
                   }
+                  break;
+                case MAV_CMD_CONDITION_DISTANCE:
+                  //发布uwb_distance,最多6机距离
+                  uwb_distance_pub.data[0] = (float)ros::Time::now().toSec();//时间戳s
+                  uwb_distance_pub.data[(uint8_t)cmd_long.param1] = 0.0f;//当前飞机自己距离为0
+                  uwb_distance_pub.data[(uint8_t)cmd_long.param2] = cmd_long.param3*0.01;//cm->m
+                  uwb_distance.publish(uwb_distance_pub);
                   break;
                 default:
                   break;
@@ -604,6 +613,12 @@ int main(int argc, char **argv) {
   motion=nh.subscribe<geometry_msgs::PoseStamped>("motion_001", 100, motionHandler, ros::TransportHints().tcpNoDelay());
   command = nh.advertise<std_msgs::Int16>("command",100);
   path_target_pub = nh.advertise<nav_msgs::Path>("path_target_001", 100);
+  uwb_distance = nh.advertise<std_msgs::Float32MultiArray>("uwb_distance",100);
+  uwb_distance_pub.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  uwb_distance_pub.layout.dim[0].label = "uwb_distance";
+  uwb_distance_pub.layout.dim[0].size = 7;
+  uwb_distance_pub.layout.dim[0].stride = 1;
+  uwb_distance_pub.data.resize(7);
   ros::Duration(1.0).sleep();
   if(set_goal){
     cmd_pub.data=101;
