@@ -162,7 +162,7 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
         follow_forward=false;
         follow_down=false;
         follow_free=false;
-        auto_follow==false;
+        auto_follow=false;
         break;
     case 1004:
         auto_follow=true;
