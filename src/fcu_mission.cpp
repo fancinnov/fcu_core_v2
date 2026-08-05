@@ -79,26 +79,6 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
         pos_takeoff_004_x=pos_odom_004_x; pos_takeoff_004_y=pos_odom_004_y; pos_takeoff_004_z=pos_odom_004_z; pos_takeoff_004_yaw=pos_odom_004_yaw;
         pos_takeoff_005_x=pos_odom_005_x; pos_takeoff_005_y=pos_odom_005_y; pos_takeoff_005_z=pos_odom_005_z; pos_takeoff_005_yaw=pos_odom_005_yaw;
         pos_takeoff_006_x=pos_odom_006_x; pos_takeoff_006_y=pos_odom_006_y; pos_takeoff_006_z=pos_odom_006_z; pos_takeoff_006_yaw=pos_odom_006_yaw;
-        if(set_goal){
-          //发布mission
-          mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
-          mission_001.layout.dim[0].label = "mission_001";
-          mission_001.layout.dim[0].size = 11;
-          mission_001.layout.dim[0].stride = 1;
-          mission_001.data.resize(11);
-          mission_001.data[0] = 0.0f;//rad
-          mission_001.data[1] = 0.0f;//rad/s
-          mission_001.data[2] = pos_takeoff_001_x;//x
-          mission_001.data[3] = pos_takeoff_001_y;//y
-          mission_001.data[4] = 1.0f;//take off alt
-          mission_001.data[5]=0;//vx
-          mission_001.data[6]=0;//vy
-          mission_001.data[7]=0;//vz
-          mission_001.data[8]=0;//ax
-          mission_001.data[9]=0;//ay
-          mission_001.data[10]=0;//az
-          mission_pub_001.publish(mission_001);
-        }
         break;
     case 5:
         enable_track=true;
