@@ -36,6 +36,7 @@ static bool use_uwb=true;//是否使用UWB基站
 static bool set_goal=false;//远程电脑用于设置轨迹规划的目标，机载电脑应为false
 static bool simple_target=true;//仅机载电脑配置：是否为简单目标点,simple_target表示目标只有位置，没有速度和加速度
 static float odom_init_x=0.0f, odom_init_y=0.0f, odom_init_z=0.0f;
+static float pos_init_x=0.0f, pos_init_y=0.0f, pos_init_z=0.0f;
 static int channel;
 static int socket_cli;
 static int get_drone;
@@ -206,15 +207,15 @@ void mav_send_target(float target_pos_x, float target_pos_y, float target_pos_z,
     }
     path_target.header.frame_id = "map";
     path_target.header.stamp = ros::Time::now();
-    odom_target.pose.position.x=target_pos_x;
-    odom_target.pose.position.y=-target_pos_y;//FRU->FLU
-    odom_target.pose.position.z=target_pos_z;
+    odom_target.pose.position.x=target_pos_x-pos_init_x;
+    odom_target.pose.position.y=-target_pos_y-pos_init_y;//FRU->FLU
+    odom_target.pose.position.z=target_pos_z-pos_init_z;
     path_target.poses.push_back(odom_target);
     path_target_pub.publish(path_target);
   }
-  set_position_target_local_ned.x=target_pos_x;
-  set_position_target_local_ned.y=target_pos_y;
-  set_position_target_local_ned.z=target_pos_z;
+  set_position_target_local_ned.x=target_pos_x-pos_init_x;
+  set_position_target_local_ned.y=target_pos_y+pos_init_y;//FRU
+  set_position_target_local_ned.z=target_pos_z-pos_init_z;
   set_position_target_local_ned.vx=target_vel_x;
   set_position_target_local_ned.vy=target_vel_y;
   set_position_target_local_ned.vz=target_vel_z;
@@ -363,9 +364,9 @@ void parse_data(void){
 							odom_pub.pose.pose.orientation.x=quaternion_odom[1];
 							odom_pub.pose.pose.orientation.y=quaternion_odom[2];
 							odom_pub.pose.pose.orientation.z=quaternion_odom[3];
-							odom_pub.pose.pose.position.x=pose.x*0.01;
-							odom_pub.pose.pose.position.y=-pose.y*0.01;
-							odom_pub.pose.pose.position.z=pose.z*0.01;
+							odom_pub.pose.pose.position.x=pose.x*0.01+pos_init_x;
+							odom_pub.pose.pose.position.y=-pose.y*0.01+pos_init_y;
+							odom_pub.pose.pose.position.z=pose.z*0.01+pos_init_z;
               odom_pub.twist.twist.linear.x=position.vx*0.01;
               odom_pub.twist.twist.linear.y=-position.vy*0.01;
               odom_pub.twist.twist.linear.z=position.vz*0.01;
@@ -594,6 +595,9 @@ int main(int argc, char **argv) {
   nh.param("odom_init_x", odom_init_x, float(0.0));
   nh.param("odom_init_y", odom_init_y, float(0.0));
   nh.param("odom_init_z", odom_init_z, float(0.0));
+  nh.param("pos_init_x", pos_init_x, float(0.0));
+  nh.param("pos_init_y", pos_init_y, float(0.0));
+  nh.param("pos_init_z", pos_init_z, float(0.0));
   mav_chan=(mavlink_channel_t)channel;
   mavlink_system.sysid=254;//强制飞控进入自主模式
   mavlink_system.compid=MAV_COMP_ID_MISSIONPLANNER;
@@ -688,7 +692,8 @@ int main(int argc, char **argv) {
 	fcntl(socket_cli, F_SETFL, flag | O_NONBLOCK);//设置为非阻塞态
 
 	time_start=ros::Time::now().toSec();
-
+  ros::Duration(1.0).sleep();
+  mav_send_heartbeat();
   int n=0;
   while (ros::ok()) {
     ros::spinOnce();

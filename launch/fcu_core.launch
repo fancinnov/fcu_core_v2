@@ -20,9 +20,12 @@
         <param name="use_uwb" value="true" type="bool"/>
         <param name="set_goal" value="false" type="bool"/>
         <param name="simple_target" value="true" type="bool"/>
-        <param name="odom_init_x" value="0.0"/> <!-- FLU坐标系 -->
+        <param name="odom_init_x" value="0.0"/> <!-- odometry_001的坐标偏移 FLU坐标系 -->
         <param name="odom_init_y" value="0.0"/>
         <param name="odom_init_z" value="0.0"/>
+        <param name="pos_init_x" value="0.0"/> <!-- odom_global_001的坐标偏移 FLU坐标系 -->
+        <param name="pos_init_y" value="0.0"/>
+        <param name="pos_init_z" value="0.0"/>
     </node>
     <node pkg="fcu_core" type="fcu_bridge_002" name="fcu_bridge_002" output="screen" >
         <remap from="~odometry_002" to="odometry_002"/>

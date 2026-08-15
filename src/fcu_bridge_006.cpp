@@ -585,7 +585,8 @@ int main(int argc, char **argv) {
 	fcntl(socket_cli, F_SETFL, flag | O_NONBLOCK);//设置为非阻塞态
 
 	time_start=ros::Time::now().toSec();
-
+  ros::Duration(1.0).sleep();
+  mav_send_heartbeat();
 	int n=0;
   while (ros::ok()) {
     ros::spinOnce();
