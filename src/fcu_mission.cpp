@@ -307,10 +307,6 @@ void execute_mission_001(const ros::TimerEvent &event){
     return;
   }
   //发布mission
-  mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_001.layout.dim[0].label = "mission_001";
-  mission_001.layout.dim[0].size = 11;
-  mission_001.layout.dim[0].stride = 1;
   mission_001.data.resize(11);
   mission_001.data[0]=yaw1;//rad
   mission_001.data[1]=0.0;//rad/s
@@ -337,10 +333,6 @@ void execute_mission_002(const ros::TimerEvent &event){
     return;
   }
   //发布mission_002
-  mission_002.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_002.layout.dim[0].label = "mission_002";
-  mission_002.layout.dim[0].size = 11;
-  mission_002.layout.dim[0].stride = 1;
   mission_002.data.resize(11);
   mission_002.data[0]=yaw2;//rad
   mission_002.data[1]=0.0f;//rad/s
@@ -367,10 +359,6 @@ void execute_mission_003(const ros::TimerEvent &event){
     return;
   }
   //发布mission_003
-  mission_003.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_003.layout.dim[0].label = "mission_003";
-  mission_003.layout.dim[0].size = 11;
-  mission_003.layout.dim[0].stride = 1;
   mission_003.data.resize(11);
   mission_003.data[0]=yaw3;//rad
   mission_003.data[1]=0.0f;//rad/s
@@ -397,10 +385,6 @@ void execute_mission_004(const ros::TimerEvent &event){
     return;
   }
   //发布mission_004
-  mission_004.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_004.layout.dim[0].label = "mission_004";
-  mission_004.layout.dim[0].size = 11;
-  mission_004.layout.dim[0].stride = 1;
   mission_004.data.resize(11);
   mission_004.data[0]=yaw4;//rad
   mission_004.data[1]=0.0f;//rad/s
@@ -427,10 +411,6 @@ void execute_mission_005(const ros::TimerEvent &event){
     return;
   }
   //发布mission_005
-  mission_005.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_005.layout.dim[0].label = "mission_005";
-  mission_005.layout.dim[0].size = 11;
-  mission_005.layout.dim[0].stride = 1;
   mission_005.data.resize(11);
   mission_005.data[0]=yaw5;//rad
   mission_005.data[1]=0.0f;//rad/s
@@ -457,10 +437,6 @@ void execute_mission_006(const ros::TimerEvent &event){
     return;
   }
   //发布mission_006
-  mission_006.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_006.layout.dim[0].label = "mission_006";
-  mission_006.layout.dim[0].size = 11;
-  mission_006.layout.dim[0].stride = 1;
   mission_006.data.resize(11);
   mission_006.data[0]=yaw6;//rad
   mission_006.data[1]=0.0f;//rad/s
@@ -571,10 +547,6 @@ void pos_cmd_handler(const quadrotor_msgs::PositionCommand::ConstPtr& pose_plan)
  * 注意：工程中/fcu_bridge/mission_xxx话题为发给飞控的目标值，目标位移应为FRU坐标系，目标姿态应为FRD坐标系
  */
   get_pos_cmd=true;
-  mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_001.layout.dim[0].label = "mission_001";
-  mission_001.layout.dim[0].size = 11;
-  mission_001.layout.dim[0].stride = 1;
   mission_001.data.resize(11);
   mission_001.data[0]=-pose_plan->yaw;//rad
   mission_001.data[1]=-pose_plan->yaw_dot;//rad/s
@@ -600,10 +572,6 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
     }
     float global_dx = follow->data[2] * cosf(pos_odom_001_yaw) - follow->data[3] * sinf(pos_odom_001_yaw);
     float global_dy = follow->data[2] * sinf(pos_odom_001_yaw) + follow->data[3] * cosf(pos_odom_001_yaw);
-    mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
-    mission_001.layout.dim[0].label = "mission_001";
-    mission_001.layout.dim[0].size = 11;
-    mission_001.layout.dim[0].stride = 1;
     mission_001.data.resize(11);
     mission_001.data[0]=pos_odom_001_yaw+follow->data[0];//rad
     mission_001.data[1]=0.0f;//rad/s
@@ -626,10 +594,6 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
     }
     float global_dx = follow->data[2] * cosf(pos_odom_001_yaw) - follow->data[3] * sinf(pos_odom_001_yaw);
     float global_dy = follow->data[2] * sinf(pos_odom_001_yaw) + follow->data[3] * cosf(pos_odom_001_yaw);
-    mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
-    mission_001.layout.dim[0].label = "mission_001";
-    mission_001.layout.dim[0].size = 11;
-    mission_001.layout.dim[0].stride = 1;
     mission_001.data.resize(11);
     mission_001.data[0]=0.0f;//rad
     mission_001.data[1]=0.0f;//rad/s
@@ -652,10 +616,6 @@ void follow_handler(const std_msgs::Float32MultiArray::ConstPtr& follow){
     }
     float global_dx = follow->data[2] * cosf(pos_odom_001_yaw) - follow->data[3] * sinf(pos_odom_001_yaw);
     float global_dy = follow->data[2] * sinf(pos_odom_001_yaw) + follow->data[3] * cosf(pos_odom_001_yaw);
-    mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
-    mission_001.layout.dim[0].label = "mission_001";
-    mission_001.layout.dim[0].size = 11;
-    mission_001.layout.dim[0].stride = 1;
     mission_001.data.resize(11);
     mission_001.data[0]=pos_odom_001_yaw+follow->data[0];//rad
     mission_001.data[1]=0.0f;//rad/s
@@ -684,10 +644,6 @@ void goal_001_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
                             (float)goal->pose.orientation.z};
   mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
   //发布mission
-  mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_001.layout.dim[0].label = "mission_001";
-  mission_001.layout.dim[0].size = 11;
-  mission_001.layout.dim[0].stride = 1;
   mission_001.data.resize(11);
   mission_001.data[0]=-goal_yaw;//rad
   mission_001.data[1]=0.0;//rad/s
@@ -710,10 +666,6 @@ void goal_002_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
                             (float)goal->pose.orientation.z};
   mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
   //发布mission
-  mission_002.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_002.layout.dim[0].label = "mission_001";
-  mission_002.layout.dim[0].size = 11;
-  mission_002.layout.dim[0].stride = 1;
   mission_002.data.resize(11);
   mission_002.data[0]=-goal_yaw;//rad
   mission_002.data[1]=0.0;//rad/s
@@ -736,10 +688,6 @@ void goal_003_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
                             (float)goal->pose.orientation.z};
   mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
   //发布mission
-  mission_003.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_003.layout.dim[0].label = "mission_001";
-  mission_003.layout.dim[0].size = 11;
-  mission_003.layout.dim[0].stride = 1;
   mission_003.data.resize(11);
   mission_003.data[0]=-goal_yaw;//rad
   mission_003.data[1]=0.0;//rad/s
@@ -762,10 +710,6 @@ void goal_004_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
                             (float)goal->pose.orientation.z};
   mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
   //发布mission
-  mission_004.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_004.layout.dim[0].label = "mission_001";
-  mission_004.layout.dim[0].size = 11;
-  mission_004.layout.dim[0].stride = 1;
   mission_004.data.resize(11);
   mission_004.data[0]=-goal_yaw;//rad
   mission_004.data[1]=0.0;//rad/s
@@ -788,10 +732,6 @@ void goal_005_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
                             (float)goal->pose.orientation.z};
   mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
   //发布mission
-  mission_005.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_005.layout.dim[0].label = "mission_001";
-  mission_005.layout.dim[0].size = 11;
-  mission_005.layout.dim[0].stride = 1;
   mission_005.data.resize(11);
   mission_005.data[0]=-goal_yaw;//rad
   mission_005.data[1]=0.0;//rad/s
@@ -814,10 +754,6 @@ void goal_006_handler(const geometry_msgs::PoseStamped::ConstPtr& goal)
                             (float)goal->pose.orientation.z};
   mavlink_quaternion_to_euler(quaternion_odom, &goal_roll, &goal_roll, &goal_yaw);
   //发布mission
-  mission_006.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  mission_006.layout.dim[0].label = "mission_001";
-  mission_006.layout.dim[0].size = 11;
-  mission_006.layout.dim[0].stride = 1;
   mission_006.data.resize(11);
   mission_006.data[0]=-goal_yaw;//rad
   mission_006.data[1]=0.0;//rad/s
@@ -854,6 +790,37 @@ int main(int argc, char **argv) {
   ros::Subscriber goal004 = nh.subscribe<geometry_msgs::PoseStamped>("goal_004", 100, goal_004_handler);
   ros::Subscriber goal005 = nh.subscribe<geometry_msgs::PoseStamped>("goal_005", 100, goal_005_handler);
   ros::Subscriber goal006 = nh.subscribe<geometry_msgs::PoseStamped>("goal_006", 100, goal_006_handler);
+
+  mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_001.layout.dim[0].label = "mission_001";
+  mission_001.layout.dim[0].size = 11;
+  mission_001.layout.dim[0].stride = 1;
+
+  mission_002.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_002.layout.dim[0].label = "mission_002";
+  mission_002.layout.dim[0].size = 11;
+  mission_002.layout.dim[0].stride = 1;
+
+  mission_003.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_003.layout.dim[0].label = "mission_003";
+  mission_003.layout.dim[0].size = 11;
+  mission_003.layout.dim[0].stride = 1;
+
+  mission_004.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_004.layout.dim[0].label = "mission_004";
+  mission_004.layout.dim[0].size = 11;
+  mission_004.layout.dim[0].stride = 1;
+
+  mission_005.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_005.layout.dim[0].label = "mission_005";
+  mission_005.layout.dim[0].size = 11;
+  mission_005.layout.dim[0].stride = 1;
+
+  mission_006.layout.dim.push_back(std_msgs::MultiArrayDimension());
+  mission_006.layout.dim[0].label = "mission_006";
+  mission_006.layout.dim[0].size = 11;
+  mission_006.layout.dim[0].stride = 1;
+
   mission_pub_001 = nh.advertise<std_msgs::Float32MultiArray>("mission_001",100);
   mission_pub_002 = nh.advertise<std_msgs::Float32MultiArray>("mission_002",100);
   mission_pub_003 = nh.advertise<std_msgs::Float32MultiArray>("mission_003",100);

@@ -132,7 +132,7 @@ void mav_send_heartbeat(void){
 	if(offboard){//串口
 		heartbeat.type=MAV_TYPE_ONBOARD_CONTROLLER;
 	}else{
-		heartbeat.type=MAV_TYPE_GCS;
+		heartbeat.type=MAV_TYPE_GCS;//MAV_TYPE_CAMERA
 	}
   heartbeat.autopilot=MAV_AUTOPILOT_INVALID;
   heartbeat.base_mode=MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;

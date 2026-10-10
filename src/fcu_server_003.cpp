@@ -149,10 +149,6 @@ void parse_data(void){
                     case MAVLINK_MSG_ID_SET_POSITION_TARGET_LOCAL_NED:
                         mavlink_msg_set_position_target_local_ned_decode(&msg_received, &set_position_target);
                         //发布mission
-                        mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
-                        mission_001.layout.dim[0].label = "mission_001";
-                        mission_001.layout.dim[0].size = 11;
-                        mission_001.layout.dim[0].stride = 1;
                         mission_001.data.resize(11);
                         mission_001.data[0]=set_position_target.yaw;//rad
                         mission_001.data[1]=set_position_target.yaw_rate;//rad/s
@@ -266,6 +262,11 @@ int main(int argc, char **argv) {
     nh.param("DRONE_PORT", PORT, 10003);
     mavlink_system.sysid=254;//强制飞控进入自主模式
     mavlink_system.compid=MAV_COMP_ID_MISSIONPLANNER;
+
+    mission_001.layout.dim.push_back(std_msgs::MultiArrayDimension());
+    mission_001.layout.dim[0].label = "mission_001";
+    mission_001.layout.dim[0].size = 11;
+    mission_001.layout.dim[0].stride = 1;
 
     ros::Rate loop_rate(200);
     battery = nh.subscribe<sensor_msgs::BatteryState>("/fcu_bridge_001/battery_state", 100, battHandler, ros::TransportHints().tcpNoDelay());
