@@ -70,6 +70,7 @@ ros::Subscriber odom;
 ros::Subscriber gnss_001;
 ros::Subscriber cmd;
 ros::Subscriber mission;
+ros::Subscriber control;
 ros::Subscriber motion;
 ros::Publisher path_global;
 ros::Publisher goal;
@@ -128,7 +129,7 @@ void mavlink_send_msg(mavlink_channel_t chan, mavlink_message_t *msg)
 //心跳
 void mav_send_heartbeat(void){
   mavlink_message_t msg_heartbeat;
-  mavlink_heartbeat_t heartbeat;
+  mavlink_heartbeat_t heartbeat = {};
 	if(offboard){//串口
 		heartbeat.type=MAV_TYPE_ONBOARD_CONTROLLER;
 	}else{
@@ -142,7 +143,7 @@ void mav_send_heartbeat(void){
 
 //解锁
 void mav_send_arm(void){
-  mavlink_set_mode_t setmode;
+  mavlink_set_mode_t setmode = {};
   mavlink_message_t msg_setmode;
   setmode.base_mode=MAV_MODE_AUTO_ARMED;
   mavlink_msg_set_mode_encode(mavlink_system.sysid, mavlink_system.compid, &msg_setmode, &setmode);
@@ -151,7 +152,7 @@ void mav_send_arm(void){
 
 //锁定
 void mav_send_disarm(void){
-  mavlink_set_mode_t setmode;
+  mavlink_set_mode_t setmode = {};
   mavlink_message_t msg_setmode;
   setmode.base_mode=MAV_MODE_AUTO_DISARMED;
   mavlink_msg_set_mode_encode(mavlink_system.sysid, mavlink_system.compid, &msg_setmode, &setmode);
@@ -160,7 +161,7 @@ void mav_send_disarm(void){
 
 //起飞
 void mav_send_takeoff(void){
-  mavlink_command_long_t command_long;
+  mavlink_command_long_t command_long = {};
   mavlink_message_t msg_command_long;
   command_long.command=MAV_CMD_NAV_TAKEOFF;
   mavlink_msg_command_long_encode(mavlink_system.sysid, mavlink_system.compid, &msg_command_long, &command_long);
@@ -169,7 +170,7 @@ void mav_send_takeoff(void){
 
 //降落
 void mav_send_land(void){
-  mavlink_command_long_t command_long;
+  mavlink_command_long_t command_long = {};
   mavlink_message_t msg_command_long;
   command_long.command=MAV_CMD_NAV_LAND;
   mavlink_msg_command_long_encode(mavlink_system.sysid, mavlink_system.compid, &msg_command_long, &command_long);
@@ -179,7 +180,7 @@ void mav_send_land(void){
 //追踪
 void mav_send_follow(float mode){
 	mavlink_message_t msg_command_long;
-	mavlink_command_long_t command_long;
+	mavlink_command_long_t command_long = {};
 	command_long.command=MAV_CMD_DO_FOLLOW;
 	command_long.param1=mode;
 	mavlink_msg_command_long_encode(mavlink_system.sysid, mavlink_system.compid, &msg_command_long, &command_long);
@@ -192,15 +193,16 @@ static mavlink_message_t msg_position_target_local_ned;
 void mav_send_target(float target_pos_x, float target_pos_y, float target_pos_z, //单位：m
                     float target_vel_x, float target_vel_y, float target_vel_z,  //单位：m/s
                     float target_acc_x, float target_acc_y, float target_acc_z,  //单位：m/ss
-                    float target_yaw, float target_yaw_rate){                    //单位：rad, rad/s
+                    float target_yaw, float target_yaw_rate,
+                    bool direct_position=false){                    //单位：rad, rad/s
   if(ros::Time::now().toSec()<time_start+5.0f){
 		return;
 	}
-  if(set_goal){
+  if(set_goal && !direct_position){
     printf("set_goal\n");
     set_position_target_local_ned.coordinate_frame=MAV_FRAME_MISSION;
   }else{
-    if(simple_target){
+    if(simple_target || direct_position){
       set_position_target_local_ned.coordinate_frame=MAV_FRAME_GLOBAL;
     }else{
       set_position_target_local_ned.coordinate_frame=MAV_FRAME_VISION_NED;
@@ -532,7 +534,7 @@ void cmdHandler(const std_msgs::Int16::ConstPtr& cmd){
   }
 }
 
-void missionHandler(const std_msgs::Float32MultiArray::ConstPtr& mission){
+void sendMission(const std_msgs::Float32MultiArray::ConstPtr& mission, bool direct_position){
     float yaw=0.0f, yaw_rate=0.0f;
     float px=0.0f, py=0.0f, pz=0.0f;
     float vx=0.0f, vy=0.0f, vz=0.0f;
@@ -553,9 +555,18 @@ void missionHandler(const std_msgs::Float32MultiArray::ConstPtr& mission){
         px, py, pz,
         vx, vy, vz,
         ax, ay, az,
-        yaw, yaw_rate
+        yaw, yaw_rate, direct_position
       );
     }
+}
+
+void missionHandler(const std_msgs::Float32MultiArray::ConstPtr& mission){
+  sendMission(mission, false);
+}
+
+// Position samples from auto_mission must never be reinterpreted as planner goals.
+void controlHandler(const std_msgs::Float32MultiArray::ConstPtr& mission){
+  sendMission(mission, true);
 }
 
 void gnssHandler(const sensor_msgs::NavSatFix::ConstPtr& gnss){
@@ -612,6 +623,7 @@ int main(int argc, char **argv) {
   odom=nh.subscribe<nav_msgs::Odometry>("odometry_001", 100, odomHandler, ros::TransportHints().tcpNoDelay());
   cmd=nh.subscribe<std_msgs::Int16>("command", 100, cmdHandler, ros::TransportHints().tcpNoDelay());
   mission=nh.subscribe<std_msgs::Float32MultiArray>("mission_001", 100, missionHandler, ros::TransportHints().tcpNoDelay());
+  control=nh.subscribe<std_msgs::Float32MultiArray>("control_001", 1, controlHandler, ros::TransportHints().tcpNoDelay());
   path_global = nh.advertise<nav_msgs::Path>("path_global_001", 100);
   goal=nh.advertise<geometry_msgs::PoseStamped>("goal_001", 100);
   motion=nh.subscribe<geometry_msgs::PoseStamped>("motion_001", 100, motionHandler, ros::TransportHints().tcpNoDelay());

@@ -10,13 +10,17 @@ sudo apt-get install ros-noetic-serial
 sudo apt-get install libeigen3-dev
 
 ## 2. Build
-在工作空间的src文件夹中：
+### 在工作空间的src文件夹中：
 * git clone https://gitee.com/fancinnov/fcu_core_v2.git 
 * git clone https://gitee.com/fancinnov/quadrotor_msgs.git 
 * git clone https://gitee.com/fancinnov/fcu_core_rviz_swarm_goals_plugin.git 
 * git clone https://gitee.com/fancinnov/FanciSwarm_urdf.git
 
-在工作空间：catkin_make
+### 必须确保importlib_metadata版本不高于4.13.0
+pip install importlib_metadata==4.13.0
+
+### 在工作空间打开终端：
+catkin_make
 
 ## 3. Source
 source devel/setup.bash

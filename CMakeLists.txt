@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -g")
   rospy
   rosbag
   std_msgs
+  std_srvs
   message_generation
   image_transport
   tf
@@ -36,6 +37,7 @@ catkin_package(
   roscpp
   rospy
   std_msgs
+  std_srvs
   serial
   quadrotor_msgs
 )
@@ -85,3 +87,16 @@ target_link_libraries(fcu_server_005 ${catkin_LIBRARIES} )
 
 add_executable(fcu_server_006 src/fcu_server_006.cpp)
 target_link_libraries(fcu_server_006 ${catkin_LIBRARIES} )
+
+catkin_install_python(PROGRAMS src/fcu_auto_mission/fcu_auto_mission_node.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(FILES src/fcu_auto_mission/__init__.py src/fcu_auto_mission/drone.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/fcu_auto_mission)
+install(TARGETS fcu_bridge_001
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY src/fcu_auto_mission
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/src
+  PATTERN "__pycache__" EXCLUDE
+  PATTERN "*.pyc" EXCLUDE)

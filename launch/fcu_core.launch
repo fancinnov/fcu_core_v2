@@ -1,4 +1,17 @@
 <launch>
+    <!-- Enable the single-aircraft mission API; execution still requires ~start. -->
+    <arg name="enable_auto_mission" default="false"/>
+    <arg name="planner_goal_topic" default="/move_base_simple/goal"/>
+    <arg name="planner_command_topic" default="/planning/pos_cmd"/>
+    <arg name="planner_timeout" default="2.0"/>
+    <arg name="planner_start_timeout" default="10.0"/>
+    <arg name="mission_file" default="$(find fcu_core)/src/fcu_auto_mission/example_mission.py"/>
+    <arg name="xy_tolerance" default="0.10"/>
+    <arg name="settle_time" default="0.5"/>
+    <arg name="takeoff_wait" default="5.0"/>
+    <arg name="arm_wait" default="2.0"/>
+    <arg name="land_wait" default="15.0"/>
+    <arg name="disarm_wait" default="10.0"/> <!-- 注意锁定等待时间必须大于实际降落时间 -->
 
     <node pkg="fcu_core" type="fcu_bridge_001" name="fcu_bridge_001" output="screen" >
         <remap from="~odometry_001" to="/vins_estimator/odometry"/> <!--"/vins_estimator/odometry" for vins; "/Odometry" for faster-lio -->
@@ -9,8 +22,9 @@
         <remap from="~goal_001" to="/move_base_simple/goal"/>
         <remap from="~motion_001" to="motion_001"/>
         <remap from="~uwb_distance" to="uwb_distance"/>
-        <remap from="~command" to="/fcu_command/command"/>
-        <remap from="~mission_001" to="/fcu_mission/mission_001"/>
+        <remap from="~command" to="$(eval '/fcu_auto_mission/command' if arg('enable_auto_mission') else '/fcu_command/command')"/>
+        <remap from="~mission_001" to="$(eval '/fcu_auto_mission/mission_001' if arg('enable_auto_mission') else '/fcu_mission/mission_001')"/>
+        <remap from="~control_001" to="/fcu_auto_mission/control_001"/>
         <param name="DRONE_IP" value="192.168.4.1" type="string"/>
         <param name="DRONE_PORT" value="333"/>
         <param name="USB_PORT" value="/dev/ttyACM0" type="string"/>
@@ -121,6 +135,23 @@
         <param name="use_uwb" value="true" type="bool"/>
         <param name="set_goal" value="false" type="bool"/>
         <param name="simple_target" value="true" type="bool"/>
+    </node>
+
+    <node if="$(arg enable_auto_mission)" pkg="fcu_core" type="fcu_auto_mission_node.py"
+          name="fcu_auto_mission" output="screen">
+        <param name="mission_file" value="$(arg mission_file)"/>
+        <param name="use_planner" value="$(arg set_goal)" type="bool"/>
+        <param name="planner_timeout" value="$(arg planner_timeout)"/>
+        <param name="planner_start_timeout" value="$(arg planner_start_timeout)"/>
+        <param name="xy_tolerance" value="$(arg xy_tolerance)"/>
+        <param name="settle_time" value="$(arg settle_time)"/>
+        <param name="takeoff_wait" value="$(arg takeoff_wait)"/>
+        <param name="arm_wait" value="$(arg arm_wait)"/>
+        <param name="land_wait" value="$(arg land_wait)"/>
+        <param name="disarm_wait" value="$(arg disarm_wait)"/>
+        <remap from="~odometry" to="/odom_global_001"/>
+        <remap from="~planner_goal" to="$(arg planner_goal_topic)"/>
+        <remap from="~pos_cmd" to="$(arg planner_command_topic)"/>
     </node>
 
     <node pkg="fcu_core" type="fcu_command" name="fcu_command" output="screen" />
