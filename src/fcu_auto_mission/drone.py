@@ -6,7 +6,6 @@ import time
 
 import rospy
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import PoseStamped
 from quadrotor_msgs.msg import PositionCommand
 from std_msgs.msg import Float32MultiArray, Int16, String
 
@@ -54,7 +53,6 @@ class Drone:
         self.command_pub = rospy.Publisher("~command", Int16, queue_size=1)
         self.target_pub = rospy.Publisher("~mission_001", Float32MultiArray, queue_size=1)
         self.control_pub = rospy.Publisher("~control_001", Float32MultiArray, queue_size=1)
-        self.goal_pub = rospy.Publisher("~planner_goal", PoseStamped, queue_size=1)
         self.status_pub = rospy.Publisher("~status", String, queue_size=10, latch=True)
         self._subscribers = [
             rospy.Subscriber("~odometry", Odometry, self._on_odom, queue_size=1),
@@ -182,19 +180,18 @@ class Drone:
             self._check(require_odom=True)
             self._target = target
             if self.use_planner:
-                if self.goal_pub.get_num_connections() == 0:
+                if self.target_pub.get_num_connections() == 0:
                     self._target = None
-                    raise MissionError("Planner goal subscriber is not connected")
-                goal = PoseStamped()
-                goal.header.frame_id = "map"
-                goal.header.stamp = rospy.Time.now()
-                goal.pose.position.x, goal.pose.position.y, goal.pose.position.z = target[:3]
-                goal.pose.orientation.z = math.sin(target[3] / 2)
-                goal.pose.orientation.w = math.cos(target[3] / 2)
+                    raise MissionError("bridge_001 mission_001 subscriber is not connected")
+                if self.control_pub.get_num_connections() == 0:
+                    self._target = None
+                    raise MissionError("bridge_001 control_001 subscriber is not connected")
                 self._planner_started = time.monotonic()
                 self._planner_at = None
                 self._planning_active = True
-                self.goal_pub.publish(goal)
+                # One final goal via MAV_FRAME_MISSION; the FC returns it to
+                # bridge_001, which publishes the planner's PoseStamped goal.
+                self.target_pub.publish(self._position_message(target))
         stable_since = [None]
 
         def reached():

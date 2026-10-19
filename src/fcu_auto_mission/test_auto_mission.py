@@ -7,6 +7,7 @@ import sys
 import types
 import unittest
 from unittest.mock import patch
+import xml.etree.ElementTree as ET
 
 
 class Message:
@@ -275,14 +276,41 @@ class MissionTests(unittest.TestCase):
         self.step = lambda: (self.feedback(x=1, y=2),
                              self.drone._on_pos_cmd(self.planner_sample()))
         self.drone.goto(1, 2, 9, 0.7, timeout=2)
-        self.assertEqual(len(self.drone.goal_pub.messages), 1)
-        goal = self.drone.goal_pub.messages[0]
-        self.assertEqual((goal.pose.position.x, goal.pose.position.y, goal.pose.position.z), (1, 2, 9))
-        self.assertAlmostEqual(goal.pose.orientation.z, math.sin(0.35))
-        self.assertEqual(self.drone.target_pub.messages, [])
+        self.assertEqual(len(self.drone.target_pub.messages), 1)
+        self.assertEqual(self.drone.target_pub.messages[0].data,
+                         [-0.7, 0, 1, -2, 9, 0, 0, 0, 0, 0, 0])
         sample = self.drone.control_pub.messages[0].data
         self.assertEqual(sample, [-0.7, 0, 1, -2, 3, 0, 0, 0, 0, 0, 0])
         self.assertFalse(self.drone._planning_active)
+        self.drone.hover(0.2)
+        self.assertEqual(len(self.drone.target_pub.messages), 1)
+        self.assertEqual(self.drone.control_pub.messages[-1].data,
+                         [-0.7, 0, 1, -2, 9, 0, 0, 0, 0, 0, 0])
+
+    def test_planner_goto_waits_for_fc_round_trip_without_repeating_goal(self):
+        self.drone.use_planner = True
+        self.step = self.feedback  # No planner samples until the goal returns.
+        with self.assertRaisesRegex(MissionError, 'Goto timed out'):
+            self.drone.goto(1, -2, 3, -0.4, timeout=0.2)
+        self.assertEqual(len(self.drone.target_pub.messages), 1)
+        self.assertEqual(self.drone.target_pub.messages[0].data,
+                         [0.4, 0, 1, 2, 3, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(self.drone.control_pub.messages, [])
+        self.drone.hold_if_controlling()
+        self.drone._publish_target(None)
+        self.assertEqual(len(self.drone.target_pub.messages), 1)
+        self.assertEqual(self.drone.control_pub.messages[-1].data[2:5], [0, 0, 0])
+
+    def test_planner_does_not_publish_pose_goals(self):
+        with patch.object(driver.rospy, 'get_param',
+                          lambda name, default=None: True if name == '~use_planner' else default), \
+                patch.object(driver.rospy, 'Publisher', side_effect=Publisher) as publishers:
+            Drone()
+        topics = [call.args[0] for call in publishers.call_args_list]
+        self.assertIn('~mission_001', topics)
+        self.assertIn('~control_001', topics)
+        self.assertNotIn('~planner_goal', topics)
+        self.assertNotIn('/move_base_simple/goal', topics)
 
     def test_planner_wait_does_not_publish_final_target_directly(self):
         self.planning()
@@ -336,15 +364,33 @@ class MissionTests(unittest.TestCase):
             self.assertIsNotNone(self.drone._planner_error)
         self.assertEqual(self.drone.control_pub.messages, [])
 
-    def test_planner_requires_goal_and_control_connections(self):
+    def test_planner_requires_mission_and_control_connections(self):
         self.drone.use_planner = True
         self.drone.control_pub.connections = 0
         with self.assertRaisesRegex(MissionError, 'control_001'):
             self.drone.prepare()
-        self.drone.control_pub.connections = 1
-        self.drone.goal_pub.connections = 0
-        with self.assertRaisesRegex(MissionError, 'goal subscriber'):
+        with self.assertRaisesRegex(MissionError, 'control_001'):
             self.drone.goto(1, 2, 3)
+        self.drone.control_pub.connections = 1
+        self.drone.target_pub.connections = 0
+        with self.assertRaisesRegex(MissionError, 'command/target'):
+            self.drone.prepare()
+        with self.assertRaisesRegex(MissionError, 'mission_001'):
+            self.drone.goto(1, 2, 3)
+        self.assertEqual(self.drone.target_pub.messages, [])
+        self.assertEqual(self.drone.control_pub.messages, [])
+
+    def test_launch_routes_goals_through_bridge_and_samples_through_control(self):
+        root = ET.parse(Path(__file__).resolve().parents[2] / 'launch' / 'fcu_core.launch').getroot()
+        self.assertIsNone(root.find("arg[@name='set_goal']"))
+        bridge = root.find("node[@name='fcu_bridge_001']")
+        mission = root.find("node[@name='fcu_auto_mission']")
+        self.assertEqual(bridge.find("param[@name='set_goal']").get('value'), 'false')
+        self.assertEqual(mission.find("param[@name='use_planner']").get('value'), 'false')
+        self.assertEqual(bridge.find("remap[@from='~goal_001']").get('to'), '/move_base_simple/goal')
+        self.assertIn('/fcu_auto_mission/mission_001', bridge.find("remap[@from='~mission_001']").get('to'))
+        self.assertEqual(bridge.find("remap[@from='~control_001']").get('to'), '/fcu_auto_mission/control_001')
+        self.assertIsNone(mission.find("remap[@from='~planner_goal']"))
 
 
 if __name__ == "__main__":

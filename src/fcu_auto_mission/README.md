@@ -89,32 +89,48 @@ def mission(drone):
 
 ## 接入规划器
 
-默认 `set_goal:=false`，沿用直接飞点。启用规划模式：
+默认沿用直接飞点。启用规划模式前，在 `launch/fcu_core.launch` 中同步修改两个节点的私有参数：
+
+| 节点 | 参数 | 直接飞点 | 使用外部规划器 |
+| --- | --- | --- | --- |
+| `fcu_bridge_001` | `set_goal` | false | true |
+| `fcu_auto_mission`（入口 `fcu_auto_mission_node.py`） | `use_planner` | false | true |
+
+这两个参数必须保持一致，分别在各自节点内配置；没有全局 `set_goal` launch arg。
+修改后重新启动节点，再开始任务：
 
 ```bash
-roslaunch fcu_core fcu_core.launch enable_auto_mission:=true set_goal:=true
+roslaunch fcu_core fcu_core.launch enable_auto_mission:=true
 rosservice call /fcu_auto_mission/start "{}"
 ```
 
-同一个 launch 参数同时设置 bridge 的 `set_goal` 和自动任务的 `use_planner`，
 不要只修改其中一个节点的私有参数。启动文件不会启动规划器，需要提前运行规划器及其定位、地图依赖。
 规划器必须与自动任务节点共享 ROS master，并使用同一个 `map` 坐标系；
-如果机载电脑和地面电脑使用不同 ROS master，需要先桥接 ROS 话题，此模式不通过 MAVLink 转发规划目标。
+自动任务节点需要接收规划器的 `/planning/pos_cmd`；如果它们使用不同 ROS master，需要桥接该话题。
 
 规划模式链路：
 
-1. `goto(x,y,z,yaw)` 向 `/move_base_simple/goal` 发布一次 `geometry_msgs/PoseStamped`，包含 yaw 四元数。
-2. 规划器向 `/planning/pos_cmd` 发布 `quadrotor_msgs/PositionCommand`。
-3. 自动任务节点转换每个规划输出的位置/yaw，发布到 `/fcu_auto_mission/control_001`。
-4. bridge 的专用 `control_001` 输入强制按位置指令发送，使用项目已有 `MAV_FRAME_GLOBAL` 标记，
+1. `goto(x,y,z,yaw)` 转换坐标，向 `/fcu_auto_mission/mission_001` 发布一次最终目标数组。
+2. bridge 的 `missionHandler()` 在 `set_goal=true` 时，将最终目标封装为 `MAV_FRAME_MISSION` 发给飞控。
+3. 飞控接收后回传 `MAV_FRAME_MISSION` 目标，bridge 的 `parse_data()` 将其转换为
+   `geometry_msgs/PoseStamped`，发布到 `/move_base_simple/goal`。
+4. 规划器接收回传目标，向 `/planning/pos_cmd` 发布 `quadrotor_msgs/PositionCommand`。
+5. 自动任务节点转换每个规划输出的位置/yaw，发布到 `/fcu_auto_mission/control_001`。
+6. bridge 的专用 `control_001` 输入强制按位置指令发送，使用项目已有 `MAV_FRAME_GLOBAL` 标记，
    不受 `set_goal=true` 影响，避免把轨迹采样点再次送去规划。
+
+自动任务节点不发布 `PoseStamped`，不再使用 `planner_goal` 话题或 `planner_goal_topic` 参数。
+该链路要求飞控支持目标回传；现有 bridge 回传分支只填位置，没有将 yaw 写入目标四元数，
+因此规划器收到的最终航向不由此链路保证。发往飞控的最终目标数组仍包含用户指定的 yaw。
+bridge 启动后的前 5 秒会忽略目标，调用 `~start` 前应等待桥接初始化完成。
 
 用户 API 不变，仍只提供 XYZ/yaw；规划输出中的速度、加速度和 yaw_dot 暂不转发，发送时填零。
 这是一条规划位置采样点转发链路，不是带速度/加速度前馈的完整轨迹跟踪。
 旧 `fcu_mission` 可以继续运行，但其轨迹输出不会进入自动任务控制的 bridge。
 
-等待规划输出时不直接发送最终目标，不定时重放旧轨迹采样。
-默认首个输出等待 10 秒，后续输出接收间隔上限 2 秒；没有输出或输出中断时任务失败，
+等待规划输出时不通过 `control_001` 直接发送最终目标，也不重复发送规划目标或重放旧轨迹采样。
+默认首个输出等待 10 秒，包含桥接发送、飞控回传及规划器启动时间；后续输出接收间隔上限 2 秒。
+没有输出或输出中断时任务失败，
 定位有效时改为发送当前位置保持指令。非法数值或明确的轨迹中止/错误标记也会中断任务。
 空闲、起飞、降落、上锁、取消时不转发规划输出；XY 到点后退出轨迹转发并保持最终目标，
 `hover()` 期间也不转发轨迹。高度和 yaw 不参与到点检测。
@@ -122,8 +138,8 @@ rosservice call /fcu_auto_mission/start "{}"
 可配置规划话题和等待时间：
 
 ```bash
-roslaunch fcu_core fcu_core.launch enable_auto_mission:=true set_goal:=true \
-  planner_goal_topic:=/move_base_simple/goal planner_command_topic:=/planning/pos_cmd \
+roslaunch fcu_core fcu_core.launch enable_auto_mission:=true \
+  planner_command_topic:=/planning/pos_cmd \
   planner_start_timeout:=10 planner_timeout:=2
 ```
 
@@ -132,9 +148,9 @@ roslaunch fcu_core fcu_core.launch enable_auto_mission:=true set_goal:=true \
 | 接口 | 类型/含义 |
 | --- | --- |
 | `/fcu_auto_mission/command` | `std_msgs/Int16`，bridge 的 `~command` 输入/原有状态事件输出 |
-| `/fcu_auto_mission/mission_001` | `std_msgs/Float32MultiArray`，bridge 的 `~mission_001` 输入 |
+| `/fcu_auto_mission/mission_001` | `std_msgs/Float32MultiArray`，直接模式持续发布位置目标；规划模式每次 `goto` 只发布一次最终目标 |
 | `/fcu_auto_mission/control_001` | `std_msgs/Float32MultiArray`，专用位置输入，不受 bridge 的 `set_goal` 影响 |
-| `/move_base_simple/goal` | `geometry_msgs/PoseStamped`，规划模式最终目标 |
+| `/move_base_simple/goal` | `geometry_msgs/PoseStamped`，bridge 发布的飞控回传目标，供规划器接收 |
 | `/planning/pos_cmd` | `quadrotor_msgs/PositionCommand`，规划位置采样输入 |
 | `/odom_global_001` | `nav_msgs/Odometry`，位置反馈 |
 | `/fcu_auto_mission/status` | `std_msgs/String`，动作、完成或失败原因，锁存最新状态 |
@@ -160,7 +176,7 @@ roslaunch fcu_core fcu_core.launch enable_auto_mission:=true set_goal:=true \
 | `action_timeout` | 30 秒，默认到点超时 |
 | `odom_timeout` | 2 秒，里程计接收有效期 |
 | `target_publish_rate` | 10 Hz |
-| `use_planner` | false，主 launch 由 `set_goal` 同步设置 |
+| `use_planner` | false，需手动与 `fcu_bridge_001` 的 `set_goal` 同步设置 |
 | `planner_start_timeout` | 10 秒，等待首个规划输出 |
 | `planner_timeout` | 2 秒，规划输出接收间隔上限 |
 

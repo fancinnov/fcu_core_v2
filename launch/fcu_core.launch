@@ -1,7 +1,6 @@
 <launch>
     <!-- Enable the single-aircraft mission API; execution still requires ~start. -->
     <arg name="enable_auto_mission" default="false"/>
-    <arg name="planner_goal_topic" default="/move_base_simple/goal"/>
     <arg name="planner_command_topic" default="/planning/pos_cmd"/>
     <arg name="planner_timeout" default="2.0"/>
     <arg name="planner_start_timeout" default="10.0"/>
@@ -140,7 +139,7 @@
     <node if="$(arg enable_auto_mission)" pkg="fcu_core" type="fcu_auto_mission_node.py"
           name="fcu_auto_mission" output="screen">
         <param name="mission_file" value="$(arg mission_file)"/>
-        <param name="use_planner" value="$(arg set_goal)" type="bool"/>
+        <param name="use_planner" value="false" type="bool"/>
         <param name="planner_timeout" value="$(arg planner_timeout)"/>
         <param name="planner_start_timeout" value="$(arg planner_start_timeout)"/>
         <param name="xy_tolerance" value="$(arg xy_tolerance)"/>
@@ -150,7 +149,6 @@
         <param name="land_wait" value="$(arg land_wait)"/>
         <param name="disarm_wait" value="$(arg disarm_wait)"/>
         <remap from="~odometry" to="/odom_global_001"/>
-        <remap from="~planner_goal" to="$(arg planner_goal_topic)"/>
         <remap from="~pos_cmd" to="$(arg planner_command_topic)"/>
     </node>
 
