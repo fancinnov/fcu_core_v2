@@ -9,8 +9,8 @@
     <arg name="settle_time" default="0.5"/>
     <arg name="takeoff_wait" default="5.0"/>
     <arg name="arm_wait" default="2.0"/>
-    <arg name="land_wait" default="15.0"/>
-    <arg name="disarm_wait" default="10.0"/> <!-- 注意锁定等待时间必须大于实际降落时间 -->
+    <arg name="land_wait" default="15.0"/> <!-- 注意降落等待时间必须大于实际降落时间 -->
+    <arg name="disarm_wait" default="2.0"/> 
 
     <node pkg="fcu_core" type="fcu_bridge_001" name="fcu_bridge_001" output="screen" >
         <remap from="~odometry_001" to="/vins_estimator/odometry"/> <!--"/vins_estimator/odometry" for vins; "/Odometry" for faster-lio -->
